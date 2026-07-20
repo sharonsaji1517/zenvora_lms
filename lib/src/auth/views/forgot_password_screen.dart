@@ -49,21 +49,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Giant Z Logo
+                        // Zenvora Logo
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(24),
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
                           ),
-                          child: const Text(
-                            'Z',
-                            style: TextStyle(
-                              fontSize: 72,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontStyle: FontStyle.italic,
-                            ),
+                          child: Image.asset(
+                            'assets/icon/app_icon.png',
+                            height: 64,
+                            width: 64,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ],
@@ -131,13 +135,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryTeal.withOpacity(0.1),
+                              color: AppTheme.primaryBlue.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.3)),
+                              border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
                             ),
                             child: Text(
                               _viewModel.successMessage!,
-                              style: const TextStyle(color: AppTheme.secondaryTeal, fontSize: 13, fontWeight: FontWeight.w500),
+                              style: const TextStyle(color: AppTheme.secondaryBlue, fontSize: 13, fontWeight: FontWeight.w500),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -167,7 +171,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             boxShadow: [
                               if (!_viewModel.isLoading)
                                 BoxShadow(
-                                  color: AppTheme.primaryTeal.withOpacity(0.3),
+                                  color: AppTheme.primaryBlue.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -205,7 +209,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             'Back to Login',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: AppTheme.primaryTeal,
+                              color: AppTheme.primaryBlue,
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
                             ),

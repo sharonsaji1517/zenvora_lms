@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/services/user_preferences_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
   String _email = '';
@@ -59,6 +60,20 @@ class LoginViewModel extends ChangeNotifier {
     // Simulate API delay
     await Future.delayed(const Duration(milliseconds: 1200));
 
+    // Save user data to SharedPreferences on successful login simulation
+    final prefsService = UserPreferencesService();
+    String nameToSave = 'Guest User';
+    if (_email == 'sharon@gmail.com') {
+      nameToSave = 'Sharon Saji';
+    } else {
+      // Try to preserve existing name if the email matches
+      final currentEmail = await prefsService.getEmail();
+      if (currentEmail == _email) {
+        nameToSave = await prefsService.getFullName();
+      }
+    }
+    await prefsService.saveUserData(nameToSave, _email);
+
     _isLoading = false;
     notifyListeners();
 
@@ -75,6 +90,14 @@ class LoginViewModel extends ChangeNotifier {
 
     // Simulate Google Sign In delay
     await Future.delayed(const Duration(milliseconds: 1500));
+
+    // Save default user data for demonstration/testing
+    final prefsService = UserPreferencesService();
+    final currentName = await prefsService.getFullName();
+    final currentEmail = await prefsService.getEmail();
+    if (currentName == 'Guest User' && currentEmail == 'guest@example.com') {
+      await prefsService.saveUserData('Sharon Saji', 'sharon@gmail.com');
+    }
 
     _isLoading = false;
     notifyListeners();

@@ -7,6 +7,9 @@ import 'widgets/promo_banner_slider.dart';
 import 'widgets/course_category_grid.dart';
 import 'widgets/rig_courses_list.dart';
 import 'widgets/featured_courses_list.dart';
+import 'package:zenvoraapp/screens/profile_screen.dart';
+import '../../courses/views/wishlist_screen.dart';
+import '../../courses/views/my_courses_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,211 +38,276 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: AppTheme.backgroundLight,
-      drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.home),
-      
-      // Top Navigation Bar
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: GestureDetector(
-            onTap: () {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: AppTheme.brandBackgroundGradient,
+      ),
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.transparent,
+        drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.home),
+
+        // Top Navigation Bar
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: false,
+          titleSpacing: 0,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: AppTheme.brandThreeColorGradient,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () {
               _scaffoldKey.currentState?.openDrawer();
             },
-            child: const CircleAvatar(
-              radius: 18,
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-              ),
-            ),
           ),
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryTeal.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/icon/app_icon.png',
+                  height: 30,
+                  width: 30,
+                  fit: BoxFit.contain,
+                ),
               ),
-              child: const Icon(Icons.water_drop, color: AppTheme.primaryTeal, size: 20),
+              const SizedBox(width: 10),
+              const Text(
+                'Zenvora',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Badge(
+                backgroundColor: AppTheme.brandGoldenYellow,
+                label: Text(
+                  '3',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Notifications center coming soon'),
+                  ),
+                );
+              },
             ),
             const SizedBox(width: 8),
-            const Text(
-              'Zenvora',
-              style: TextStyle(
-                color: AppTheme.textDark,
-                fontWeight: FontWeight.w800,
-                fontSize: 20,
-                letterSpacing: -0.5,
-              ),
-            ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Badge(
-              backgroundColor: AppTheme.accentOrange,
-              label: Text('3'),
-              child: Icon(Icons.notifications_none_rounded, color: AppTheme.textDark),
-            ),
+
+        // Main Scrollable Body using View Model state
+        body: ListenableBuilder(
+          listenable: _viewModel,
+          builder: (context, child) {
+            if (_viewModel.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+              );
+            }
+
+            if (_viewModel.errorMessage != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(_viewModel.errorMessage!),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => _viewModel.loadHomeData(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return CustomScrollView(
+              slivers: [
+                // Welcome Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Good Morning, ${_viewModel.firstName} 👋',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppTheme.textLight,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Ready for your next shift?',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textDark,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Horizontal Promo Banner Slider
+                SliverToBoxAdapter(
+                  child: PromoBannerSlider(viewModel: _viewModel),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+                // Course Categories Grid
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CourseCategoryGrid(viewModel: _viewModel),
+                  ),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+                // Rig-Associated Courses (Horizontal Scroll)
+                SliverToBoxAdapter(
+                  child: RigCoursesList(courses: _viewModel.rigCourses),
+                ),
+
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+                // Featured Courses (Vertical List)
+                SliverToBoxAdapter(
+                  child: FeaturedCoursesList(
+                    viewModel: _viewModel,
+                    courses: _viewModel.featuredCourses,
+                  ),
+                ),
+
+                // Bottom padding
+                const SliverToBoxAdapter(child: SizedBox(height: 40)),
+              ],
+            );
+          },
+        ),
+
+        // Custom Curved Bottom Navigation Bar
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8,
+          elevation: 8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.home_rounded,
+                label: 'Home',
+                isSelected: true,
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.school_outlined,
+                label: 'Courses',
+                isSelected: false,
+              ),
+
+              // Middle Add button placement space
+              const SizedBox(width: 48),
+
+              _buildNavItem(
+                context,
+                icon: Icons.favorite_border_outlined,
+                activeIcon: Icons.favorite,
+                label: 'Wishlist',
+                isSelected: false,
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.person_outline,
+                label: 'Profile',
+                isSelected: false,
+              ),
+            ],
+          ),
+        ),
+
+        // Floating Action Action Button styled like the mockup (resting inside BottomAppBar notch)
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Container(
+          height: 56,
+          width: 56,
+          decoration: const BoxDecoration(
+            gradient: AppTheme.brandBlueGreenGradient,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: FloatingActionButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifications center coming soon')),
+                const SnackBar(
+                  content: Text(
+                    'Quick Action triggered! Add notes, search, or access resources.',
+                  ),
+                  backgroundColor: AppTheme.accentGreen,
+                ),
               );
             },
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            highlightElevation: 0,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, color: Colors.white, size: 28),
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-
-      // Main Scrollable Body using View Model state
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, child) {
-          if (_viewModel.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primaryTeal),
-            );
-          }
-
-          if (_viewModel.errorMessage != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 16),
-                  Text(_viewModel.errorMessage!),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => _viewModel.loadHomeData(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return CustomScrollView(
-            slivers: [
-              // Welcome Header
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Good Morning, Sarah 👋',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.textLight,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Ready for your next shift?',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textDark,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Horizontal Promo Banner Slider
-              SliverToBoxAdapter(
-                child: PromoBannerSlider(viewModel: _viewModel),
-              ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-              // Course Categories Grid
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CourseCategoryGrid(
-                    viewModel: _viewModel,
-                  ),
-                ),
-              ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-              // Rig-Associated Courses (Horizontal Scroll)
-              SliverToBoxAdapter(
-                child: RigCoursesList(
-                  courses: _viewModel.rigCourses,
-                ),
-              ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-              // Featured Courses (Vertical List)
-              SliverToBoxAdapter(
-                child: FeaturedCoursesList(
-                  viewModel: _viewModel,
-                  courses: _viewModel.featuredCourses,
-                ),
-              ),
-
-              // Bottom padding
-              const SliverToBoxAdapter(child: SizedBox(height: 40)),
-            ],
-          );
-        },
-      ),
-
-      // Custom Curved Bottom Navigation Bar
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        elevation: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(context, icon: Icons.home_rounded, label: 'Home', isSelected: true),
-            _buildNavItem(context, icon: Icons.school_outlined, label: 'Courses', isSelected: false),
-            
-            // Middle Add button placement space
-            const SizedBox(width: 48),
-
-            _buildNavItem(context, icon: Icons.forum_outlined, label: 'Community', isSelected: false),
-            _buildNavItem(context, icon: Icons.person_outline, label: 'Profile', isSelected: false),
-          ],
         ),
-      ),
-      
-      // Floating Action Action Button styled like the mockup (resting inside BottomAppBar notch)
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Quick Action triggered! Add notes, search, or access resources.'),
-              backgroundColor: AppTheme.primaryTeal,
-            ),
-          );
-        },
-        backgroundColor: AppTheme.primaryTeal,
-        shape: const CircleBorder(),
-        elevation: 4,
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
@@ -247,37 +315,81 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildNavItem(
     BuildContext context, {
     required IconData icon,
+    IconData? activeIcon,
     required String label,
     required bool isSelected,
   }) {
+    Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          isSelected ? (activeIcon ?? icon) : icon,
+          color: isSelected ? Colors.white : AppTheme.textLight,
+          size: 22,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : AppTheme.textLight,
+          ),
+        ),
+      ],
+    );
+
     return GestureDetector(
+      // onTap: () {
+      //   if (!isSelected) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       SnackBar(content: Text('Navigating to $label screen...')),
+      //     );
+      //   }
+      // },
       onTap: () {
-        if (!isSelected) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Navigating to $label screen...')),
+        if (label == 'Profile') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          );
+        } else if (label == 'Wishlist') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const WishlistScreen()),
+          ).then((_) {
+            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+            _viewModel.loadHomeData();
+          });
+        } else if (label == 'Courses') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MyCoursesScreen()),
           );
         }
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? AppTheme.primaryTeal : AppTheme.textLight,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? AppTheme.primaryTeal : AppTheme.textLight,
+      child: isSelected
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: AppTheme.brandBlueGreenGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryBlue.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: content,
+            )
+          : Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              color: Colors.transparent,
+              child: content,
             ),
-          ),
-        ],
-      ),
     );
   }
 }

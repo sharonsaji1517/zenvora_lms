@@ -48,7 +48,7 @@ class ForgotPasswordViewModel extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(_successMessage!),
-          backgroundColor: const Color(0xFF0F9F90),
+          backgroundColor: const Color(0xFF163A5F),
           duration: const Duration(seconds: 4),
         ),
       );

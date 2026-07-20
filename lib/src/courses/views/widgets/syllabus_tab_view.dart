@@ -63,12 +63,12 @@ class SyllabusTabView extends StatelessWidget {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryTeal.withOpacity(0.08),
+                          color: AppTheme.primaryBlue.withOpacity(0.08),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           itemIcon,
-                          color: AppTheme.primaryTeal,
+                          color: AppTheme.primaryBlue,
                           size: 20,
                         ),
                       ),
@@ -124,7 +124,7 @@ class SyllabusTabView extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$action "${item.title}"...'),
-        backgroundColor: AppTheme.primaryTeal,
+        backgroundColor: AppTheme.accentGreen,
         duration: const Duration(seconds: 2),
       ),
     );

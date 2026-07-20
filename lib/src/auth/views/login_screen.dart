@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Premium Header Section with Gradients
                 Container(
                   width: double.infinity,
-                  height: size.height * 0.35,
+                  height: size.height * 0.40,
                   decoration: const BoxDecoration(
                     gradient: AppTheme.primaryGradient,
                   ),
@@ -51,21 +51,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Stylized Logo Z
+                        // Zenvora Logo
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white,
                             shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
                           ),
-                          child: const Text(
-                            'Z',
-                            style: TextStyle(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              fontStyle: FontStyle.italic,
-                            ),
+                          child: Image.asset(
+                            'assets/icon/app_icon.png',
+                            height: 64,
+                            width: 64,
+                            fit: BoxFit.contain,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -78,15 +82,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             letterSpacing: 0.8,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
-                          'Empowering Oil & Gas Education',
+                          'Empowering Oil& Gas Education',
                           style: TextStyle(
-                            fontSize: 14,
                             color: Colors.white.withOpacity(0.85),
-                            fontWeight: FontWeight.w500,
                           ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
                         ),
+
+                        // const SizedBox(height: 8),
+                        // Text(
+                        //   'Learn English. Speak with Confidence.',
+                        //   style: TextStyle(
+                        //     fontSize: 14,
+                        //     color: Colors.white.withOpacity(0.85),
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -94,9 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // Login Form Card Overlay
                 Transform.translate(
-                  offset: const Offset(0, -30),
+                  offset: const Offset(0, -15),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 36,
+                    ),
                     decoration: const BoxDecoration(
                       color: AppTheme.cardLight,
                       borderRadius: BorderRadius.only(
@@ -123,22 +141,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text(
                           'Enter your email and password to log in',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppTheme.textMedium, fontSize: 14),
+                          style: TextStyle(
+                            color: AppTheme.textMedium,
+                            fontSize: 14,
+                          ),
                         ),
                         const SizedBox(height: 32),
 
                         // Error message if any
                         if (_viewModel.errorMessage != null) ...[
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.redAccent.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                              border: Border.all(
+                                color: Colors.redAccent.withOpacity(0.3),
+                              ),
                             ),
                             child: Text(
                               _viewModel.errorMessage!,
-                              style: const TextStyle(color: Colors.redAccent, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 13,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -153,7 +182,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged: _viewModel.setEmail,
                           decoration: const InputDecoration(
                             hintText: 'Email address',
-                            prefixIcon: Icon(Icons.email_outlined, color: AppTheme.textLight),
+                            prefixIcon: Icon(
+                              Icons.email_outlined,
+                              color: AppTheme.textLight,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -166,7 +198,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged: _viewModel.setPassword,
                           decoration: InputDecoration(
                             hintText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outlined, color: AppTheme.textLight),
+                            prefixIcon: const Icon(
+                              Icons.lock_outlined,
+                              color: AppTheme.textLight,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _viewModel.obscurePassword
@@ -185,7 +220,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.forgotPassword,
+                              );
                             },
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
@@ -195,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Text(
                               'Forgot Password?',
                               style: TextStyle(
-                                color: AppTheme.primaryTeal,
+                                color: AppTheme.primaryBlue,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -208,13 +246,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           height: 56,
                           decoration: BoxDecoration(
-                            gradient: _viewModel.isLoading ? null : AppTheme.primaryGradient,
-                            color: _viewModel.isLoading ? AppTheme.textLight : null,
+                            gradient: _viewModel.isLoading
+                                ? null
+                                : AppTheme.primaryGradient,
+                            color: _viewModel.isLoading
+                                ? AppTheme.textLight
+                                : null,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               if (!_viewModel.isLoading)
                                 BoxShadow(
-                                  color: AppTheme.primaryTeal.withOpacity(0.3),
+                                  color: AppTheme.primaryBlue.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -249,7 +291,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             const Text(
                               "Don't have an account? ",
-                              style: TextStyle(color: AppTheme.textMedium, fontSize: 14),
+                              style: TextStyle(
+                                color: AppTheme.textMedium,
+                                fontSize: 14,
+                              ),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -258,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: const Text(
                                 'Sign Up',
                                 style: TextStyle(
-                                  color: AppTheme.primaryTeal,
+                                  color: AppTheme.primaryBlue,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
@@ -271,9 +316,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Social Login Divider
                         Row(
                           children: [
-                            const Expanded(child: Divider(color: AppTheme.borderLight)),
+                            const Expanded(
+                              child: Divider(color: AppTheme.borderLight),
+                            ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Text(
                                 'Or continue with',
                                 style: TextStyle(
@@ -283,7 +332,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                            const Expanded(child: Divider(color: AppTheme.borderLight)),
+                            const Expanded(
+                              child: Divider(color: AppTheme.borderLight),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 24),
@@ -304,14 +355,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.network(
-                                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png',
+                              Image.asset(
+                                'assets/icon/app_icon.png',
                                 height: 22,
-                                errorBuilder: (context, error, stackTrace) => const Icon(
-                                  Icons.g_mobiledata_rounded,
-                                  color: Colors.redAccent,
-                                  size: 26,
-                                ),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(
+                                      Icons.g_mobiledata_rounded,
+                                      color: Colors.redAccent,
+                                      size: 26,
+                                    ),
                               ),
                               const SizedBox(width: 12),
                               const Text(

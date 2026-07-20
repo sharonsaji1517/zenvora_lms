@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme.dart';
 
 class ReusableCourseCard extends StatelessWidget {
   final String title;
@@ -49,7 +50,7 @@ class ReusableCourseCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                    child: Image.network(
+                    child: Image.asset(
                       imageUrl,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -98,7 +99,7 @@ class ReusableCourseCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
+                        color: AppTheme.primaryBlue,
                         height: 1.2,
                       ),
                     ),
@@ -121,7 +122,7 @@ class ReusableCourseCard extends StatelessWidget {
                                 '${(progress! * 100).toInt()}%',
                                 style: const TextStyle(
                                   fontSize: 10,
-                                  color: Color(0xFF0F9F90),
+                                  color: AppTheme.accentGreen,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -135,7 +136,7 @@ class ReusableCourseCard extends StatelessWidget {
                               minHeight: 4,
                               backgroundColor: const Color(0xFFF1F5F9),
                               valueColor: const AlwaysStoppedAnimation<Color>(
-                                Color(0xFF0F9F90),
+                                AppTheme.accentGreen,
                               ),
                             ),
                           ),
@@ -147,7 +148,7 @@ class ReusableCourseCard extends StatelessWidget {
                         price!,
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF0F9F90),
+                          color: AppTheme.goldenAccent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

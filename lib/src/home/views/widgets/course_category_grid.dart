@@ -10,6 +10,25 @@ class CourseCategoryGrid extends StatelessWidget {
     required this.viewModel,
   });
 
+  Color _getCategoryColor(String id) {
+    switch (id) {
+      case 'rig':
+        return AppTheme.brandDeepBlue;
+      case 'safety':
+        return AppTheme.brandEmeraldGreen;
+      case 'technical':
+        return AppTheme.brandOceanBlue;
+      case 'hse':
+        return AppTheme.brandEmeraldGreen;
+      case 'exploration':
+        return AppTheme.brandGoldenYellow;
+      case 'management':
+        return AppTheme.brandOceanBlue;
+      default:
+        return AppTheme.brandDeepBlue;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -25,25 +44,27 @@ class CourseCategoryGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final category = viewModel.categories[index];
         final isSelected = viewModel.selectedCategoryId == category.id;
+        final categoryColor = _getCategoryColor(category.id);
 
         return GestureDetector(
           onTap: () => viewModel.selectCategory(category.id),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.primaryTeal : Colors.white,
+              color: isSelected ? AppTheme.brandDeepBlue : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isSelected ? Colors.transparent : AppTheme.borderLight,
-                width: 1,
+                color: isSelected ? Colors.transparent : categoryColor.withOpacity(0.25),
+                width: 1.2,
               ),
               boxShadow: [
-                if (isSelected)
-                  BoxShadow(
-                    color: AppTheme.primaryTeal.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
+                BoxShadow(
+                  color: isSelected
+                      ? AppTheme.brandDeepBlue.withOpacity(0.25)
+                      : Colors.black.withOpacity(0.04),
+                  blurRadius: isSelected ? 8 : 6,
+                  offset: isSelected ? const Offset(0, 3) : const Offset(0, 2),
+                ),
               ],
             ),
             child: Column(
@@ -55,12 +76,12 @@ class CourseCategoryGrid extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected 
                         ? Colors.white.withOpacity(0.2) 
-                        : AppTheme.primaryTeal.withOpacity(0.08),
+                        : categoryColor.withOpacity(0.08),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     category.icon,
-                    color: isSelected ? Colors.white : AppTheme.primaryTeal,
+                    color: isSelected ? Colors.white : categoryColor,
                     size: 24,
                   ),
                 ),

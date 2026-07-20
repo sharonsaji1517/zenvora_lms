@@ -58,12 +58,12 @@ class ResourcesTabView extends StatelessWidget {
               style: TextStyle(fontSize: 11, color: AppTheme.textLight),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.download_for_offline_outlined, color: AppTheme.primaryTeal),
+              icon: const Icon(Icons.download_for_offline_outlined, color: AppTheme.primaryBlue),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Downloading "$resourceName"...'),
-                    backgroundColor: AppTheme.primaryTeal,
+                    backgroundColor: AppTheme.accentGreen,
                   ),
                 );
               },

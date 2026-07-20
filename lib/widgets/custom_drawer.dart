@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../screens/login_screen.dart';
 import '../screens/home_screen.dart';
-import '../screens/my_courses_screen.dart';
-import '../screens/learning_paths_screen.dart';
-import '../screens/community_screen.dart';
+import '../src/courses/views/my_courses_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
+import '../core/theme/app_theme.dart';
+import '../core/services/user_preferences_service.dart';
 
 enum DrawerItem {
   home,
@@ -16,13 +16,37 @@ enum DrawerItem {
   settings,
 }
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   final DrawerItem activeItem;
 
   const CustomDrawer({
     super.key,
     required this.activeItem,
   });
+
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  String _fullName = 'Guest User';
+  String _email = 'guest@example.com';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefsService = UserPreferencesService();
+    final name = await prefsService.getFullName();
+    final email = await prefsService.getEmail();
+    setState(() {
+      _fullName = name;
+      _email = email;
+    });
+  }
 
   void _navigateTo(BuildContext context, Widget screen) {
     Navigator.of(context).pushReplacement(
@@ -36,7 +60,7 @@ class CustomDrawer extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('Confirm Logout'),
-          content: const Text('Are you sure you want to log out of Zenvora LMS?'),
+          content: const Text('Are you sure you want to log out of Easy Learn?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -69,47 +93,48 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Drawer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Drawer Profile Header
           UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  colorScheme.primary,
-                  colorScheme.secondary,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+            decoration: const BoxDecoration(
+              gradient: AppTheme.primaryGradient,
             ),
             currentAccountPicture: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
-                  ),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/profile.jpg',
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.person,
+                        size: 36,
+                        color: Colors.grey.shade600,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
-            accountName: const Text(
-              'Sarah J.',
-              style: TextStyle(
+            accountName: Text(
+              _fullName,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            accountEmail: const Text(
-              'sarah.j@zenvora.com',
-              style: TextStyle(
+            accountEmail: Text(
+              _email,
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 13,
               ),
@@ -126,7 +151,7 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icons.dashboard_outlined,
                   activeIcon: Icons.dashboard,
                   label: 'Home Dashboard',
-                  isSelected: activeItem == DrawerItem.home,
+                  isSelected: widget.activeItem == DrawerItem.home,
                   onTap: () => _navigateTo(context, const HomeScreen()),
                 ),
                 _buildTile(
@@ -134,31 +159,15 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icons.school_outlined,
                   activeIcon: Icons.school,
                   label: 'My Enrolled Courses',
-                  isSelected: activeItem == DrawerItem.myCourses,
+                  isSelected: widget.activeItem == DrawerItem.myCourses,
                   onTap: () => _navigateTo(context, const MyCoursesScreen()),
-                ),
-                _buildTile(
-                  context,
-                  icon: Icons.alt_route_outlined,
-                  activeIcon: Icons.alt_route,
-                  label: 'Learning Paths',
-                  isSelected: activeItem == DrawerItem.learningPaths,
-                  onTap: () => _navigateTo(context, const LearningPathsScreen()),
-                ),
-                _buildTile(
-                  context,
-                  icon: Icons.forum_outlined,
-                  activeIcon: Icons.forum,
-                  label: 'Community Feed',
-                  isSelected: activeItem == DrawerItem.community,
-                  onTap: () => _navigateTo(context, const CommunityScreen()),
                 ),
                 _buildTile(
                   context,
                   icon: Icons.person_outline,
                   activeIcon: Icons.person,
                   label: 'My Profile',
-                  isSelected: activeItem == DrawerItem.profile,
+                  isSelected: widget.activeItem == DrawerItem.profile,
                   onTap: () => _navigateTo(context, const ProfileScreen()),
                 ),
                 _buildTile(
@@ -166,7 +175,7 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icons.settings_outlined,
                   activeIcon: Icons.settings,
                   label: 'Settings',
-                  isSelected: activeItem == DrawerItem.settings,
+                  isSelected: widget.activeItem == DrawerItem.settings,
                   onTap: () => _navigateTo(context, const SettingsScreen()),
                 ),
               ],
@@ -229,7 +238,7 @@ class CustomDrawer extends StatelessWidget {
           ),
         ),
         selected: isSelected,
-        selectedTileColor: colorScheme.primary.withOpacity(0.08),
+        selectedTileColor: AppTheme.primaryBlue.withOpacity(0.12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

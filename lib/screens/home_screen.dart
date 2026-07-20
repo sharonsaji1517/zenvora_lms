@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/reusable_course_card.dart';
-import 'my_courses_screen.dart';
+import '../src/courses/views/my_courses_screen.dart';
 import 'community_screen.dart';
 import 'profile_screen.dart';
+import 'learning_paths_screen.dart';
+import '../src/courses/views/wishlist_screen.dart';
 import 'course_details_screen.dart';
 import 'category_courses_screen.dart';
 
@@ -24,16 +26,16 @@ class _HomeScreenState extends State<HomeScreen> {
   // Banner Data
   final List<Map<String, String>> _banners = [
     {
-      'title': 'Oil & Gas Safety Fundamentals',
-      'image': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800',
+      'title': ' Safety Fundamentals',
+      'image': 'assets/images/carousel/NZu2b.jpg',
     },
     {
       'title': 'Advanced Drilling Techniques',
-      'image': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
+      'image': 'assets/images/carousel/T2kGe.jpg',
     },
     {
       'title': 'Offshore Platform Survival',
-      'image': 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=800',
+      'image': 'assets/images/carousel/FlvdF.jpg',
     },
   ];
 
@@ -52,17 +54,17 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'title': 'Drilling Operations 101',
       'progress': 0.35,
-      'image': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/FlvdF.jpg',
     },
     {
       'title': 'Offshore Platform Safety',
       'progress': 0.70,
-      'image': 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/NZu2b.jpg',
     },
     {
       'title': 'HSE Standards & Safety',
       'progress': 0.12,
-      'image': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/T2kGe.jpg',
     },
   ];
 
@@ -71,19 +73,19 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'title': 'Advanced Well Control',
       'price': '\$149',
-      'image': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/FlvdF.jpg',
       'isFavorite': true,
     },
     {
       'title': 'Pipeline Inspection Masterclass',
       'price': '\$199',
-      'image': 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/NZu2b.jpg',
       'isFavorite': false,
     },
     {
-      'title': 'Marine Logistics',
+      'title': 'Marine Language',
       'price': '\$89',
-      'image': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/T2kGe.jpg',
       'isFavorite': true,
     },
   ];
@@ -119,13 +121,16 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => 
+        pageBuilder: (context, animation, secondaryAnimation) =>
             CourseDetailsScreen(title: title, imageUrl: imageUrl),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeInOutCubic;
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
           return SlideTransition(position: offsetAnimation, child: child);
         },
@@ -148,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       drawer: const CustomDrawer(activeItem: DrawerItem.home),
-      
+
       // AppBar
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -158,11 +163,29 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: Builder(
           builder: (context) => GestureDetector(
             onTap: () => Scaffold.of(context).openDrawer(),
-            child: const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/profile.jpg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey.shade200,
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.person,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -171,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.water_drop, color: Color(0xFF0F9F90)),
+            const Icon(Icons.water_drop, color: Color(0xFF163A5F)),
             const SizedBox(width: 8),
             const Text(
               'Zenvora',
@@ -189,7 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_none, color: Color(0xFF0F172A)),
+                icon: const Icon(
+                  Icons.notifications_none,
+                  color: Color(0xFF0F172A),
+                ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('No new notifications.')),
@@ -213,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 4),
         ],
       ),
-      
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
         child: Column(
@@ -235,12 +261,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: GestureDetector(
-                      onTap: () => _navigateToCourse(context, banner['title']!, banner['image']!),
+                      onTap: () => _navigateToCourse(
+                        context,
+                        banner['title']!,
+                        banner['image']!,
+                      ),
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
-                            image: NetworkImage(banner['image']!),
+                            image: AssetImage(banner['image']!),
                             fit: BoxFit.cover,
                             colorFilter: ColorFilter.mode(
                               Colors.black.withOpacity(0.5),
@@ -255,7 +285,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF05B29B),
                                   borderRadius: BorderRadius.circular(6),
@@ -301,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   decoration: BoxDecoration(
                     color: _currentBannerIndex == index
-                        ? const Color(0xFF0F9F90)
+                        ? const Color(0xFF163A5F)
                         : const Color(0xFFE2E8F0),
                     shape: BoxShape.circle,
                   ),
@@ -328,12 +361,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      childAspectRatio: 0.9,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.9,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
                     itemCount: _categories.length,
                     itemBuilder: (context, index) {
                       final cat = _categories[index];
@@ -342,11 +376,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => 
-                                  CategoryCoursesScreen(categoryName: cat['name']),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(opacity: animation, child: child);
-                              },
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      CategoryCoursesScreen(
+                                        categoryName: cat['name'],
+                                      ),
+                              transitionsBuilder:
+                                  (
+                                    context,
+                                    animation,
+                                    secondaryAnimation,
+                                    child,
+                                  ) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    );
+                                  },
                             ),
                           );
                         },
@@ -369,18 +415,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF0F9F90).withOpacity(0.1),
+                                  color: const Color(
+                                    0xFF163A5F,
+                                  ).withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   cat['icon'] as IconData,
-                                  color: const Color(0xFF0F9F90),
+                                  color: const Color(0xFF163A5F),
                                   size: 28,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0,
+                                ),
                                 child: Text(
                                   cat['name']!,
                                   textAlign: TextAlign.center,
@@ -417,7 +467,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.arrow_forward, color: Color(0xFF475569), size: 20),
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      color: Color(0xFF475569),
+                      size: 20,
+                    ),
                     onPressed: () {},
                   ),
                 ],
@@ -437,7 +491,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: course['title'],
                     imageUrl: course['image'],
                     progress: course['progress'],
-                    onTap: () => _navigateToCourse(context, course['title'], course['image']),
+                    onTap: () => _navigateToCourse(
+                      context,
+                      course['title'],
+                      course['image'],
+                    ),
                   );
                 },
               ),
@@ -459,7 +517,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.arrow_forward, color: Color(0xFF475569), size: 20),
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      color: Color(0xFF475569),
+                      size: 20,
+                    ),
                     onPressed: () {},
                   ),
                 ],
@@ -485,7 +547,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         course['isFavorite'] = !course['isFavorite'];
                       });
                     },
-                    onTap: () => _navigateToCourse(context, course['title'], course['image']),
+                    onTap: () => _navigateToCourse(
+                      context,
+                      course['title'],
+                      course['image'],
+                    ),
                   );
                 },
               ),
@@ -501,12 +567,14 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Quick Action triggered! Add notes or access compliance resources.'),
-              backgroundColor: Color(0xFF0F9F90),
+              content: Text(
+                'Quick Action triggered! Add notes or access compliance resources.',
+              ),
+              backgroundColor: Color(0xFF163A5F),
             ),
           );
         },
-        backgroundColor: const Color(0xFF0F9F90),
+        backgroundColor: const Color(0xFF163A5F),
         shape: const CircleBorder(),
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -538,10 +606,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 48), // Space for FAB
               _buildNavItem(
-                icon: Icons.chat_bubble_outline,
-                label: 'Community',
+                icon: Icons.favorite_border_outlined,
+                label: 'Wishlist',
                 isSelected: false,
-                onTap: () => _onTabTapped(context, const CommunityScreen()),
+                onTap: () => _onTabTapped(context, const WishlistScreen()),
               ),
               _buildNavItem(
                 icon: Icons.person_outline,
@@ -573,7 +641,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF0F9F90) : const Color(0xFF94A3B8),
+              color: isSelected
+                  ? const Color(0xFF163A5F)
+                  : const Color(0xFF94A3B8),
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -582,7 +652,9 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? const Color(0xFF0F9F90) : const Color(0xFF94A3B8),
+                color: isSelected
+                    ? const Color(0xFF163A5F)
+                    : const Color(0xFF94A3B8),
               ),
             ),
           ],

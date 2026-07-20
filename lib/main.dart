@@ -12,7 +12,7 @@ class ZenvoraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Zenvora LMS',
+      title: 'Zenvora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       initialRoute: AppRoutes.login,

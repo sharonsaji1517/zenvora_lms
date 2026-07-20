@@ -36,7 +36,7 @@ class LearningPathsScreen extends StatelessWidget {
         'title': 'Rig Management Professional',
         'duration': '50 hours',
         'coursesCount': 8,
-        'description': 'Leadership, resource management, global logistics compliance, and legal audit guidelines.',
+        'description': 'Leadership, resource management, global Language compliance, and legal audit guidelines.',
         'icon': Icons.assignment,
       },
     ];
@@ -172,3 +172,4 @@ class LearningPathsScreen extends StatelessWidget {
     );
   }
 }
+

@@ -12,7 +12,7 @@ class MyCoursesScreen extends StatelessWidget {
     // Enrolled courses mock data list
     final List<Map<String, dynamic>> courses = [
       {
-        'title': 'Oil & Gas Safety Fundamentals',
+        'title': 'English Safety Fundamentals',
         'progress': 0.75,
         'category': 'Safety Operations',
         'instructor': 'Dr. Robert Carter',
@@ -153,3 +153,4 @@ class MyCoursesScreen extends StatelessWidget {
     );
   }
 }
+

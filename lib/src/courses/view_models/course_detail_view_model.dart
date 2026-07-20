@@ -59,7 +59,7 @@ class CourseDetailViewModel extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Successfully enrolled in "${course.title}"!'),
-          backgroundColor: const Color(0xFF0F9F90),
+          backgroundColor: const Color(0xFF163A5F),
         ),
       );
     }

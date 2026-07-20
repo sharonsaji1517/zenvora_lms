@@ -67,13 +67,13 @@ class RigCoursesList extends StatelessWidget {
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: Image.network(
-                        course.imageUrl,
+                      child: Image.asset(
+                        const [
+                          'assets/images/carousel/NZu2b.jpg',
+                          'assets/images/carousel/T2kGe.jpg',
+                          'assets/images/carousel/FlvdF.jpg',
+                        ][index % 3],
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: AppTheme.primaryTeal.withOpacity(0.1),
-                          child: const Icon(Icons.image, color: AppTheme.primaryTeal),
-                        ),
                       ),
                     ),
                   ),
@@ -94,7 +94,7 @@ class RigCoursesList extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textDark,
+                              color: AppTheme.brandDeepBlue,
                               height: 1.25,
                             ),
                           ),
@@ -117,7 +117,7 @@ class RigCoursesList extends StatelessWidget {
                                     '${(course.progress * 100).toInt()}%',
                                     style: const TextStyle(
                                       fontSize: 10,
-                                      color: AppTheme.primaryTeal,
+                                      color: AppTheme.brandEmeraldGreen,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -130,7 +130,7 @@ class RigCoursesList extends StatelessWidget {
                                   value: course.progress,
                                   minHeight: 4,
                                   backgroundColor: AppTheme.borderLight,
-                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryTeal),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.brandEmeraldGreen),
                                 ),
                               ),
                             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/services/user_preferences_service.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   String _fullName = '';
@@ -101,14 +102,17 @@ class SignUpViewModel extends ChangeNotifier {
     // Simulate API delay
     await Future.delayed(const Duration(milliseconds: 1500));
 
+    final prefsService = UserPreferencesService();
+    await prefsService.saveUserData(_fullName, _email);
+
     _isLoading = false;
     notifyListeners();
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Account created successfully! Welcome to Zenvora.'),
-          backgroundColor: Color(0xFF0F9F90),
+          content: Text('Account created successfully! Welcome to Easy Learn.'),
+          backgroundColor: Color(0xFF163A5F),
         ),
       );
       Navigator.pushReplacementNamed(context, AppRoutes.home);

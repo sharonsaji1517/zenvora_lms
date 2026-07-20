@@ -61,7 +61,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
               child: Text(
                 _isDescriptionExpanded ? 'Read Less' : 'Read More',
                 style: const TextStyle(
-                  color: AppTheme.primaryTeal,
+                  color: AppTheme.primaryBlue,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -99,7 +99,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
                       padding: EdgeInsets.only(top: 4.0),
                       child: Icon(
                         Icons.check_circle_outline,
-                        color: AppTheme.primaryTeal,
+                        color: AppTheme.accentGreen,
                         size: 18,
                       ),
                     ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../models/course_model.dart';
 import '../view_models/course_detail_view_model.dart';
 import 'widgets/overview_tab_view.dart';
 import 'widgets/syllabus_tab_view.dart';
 import 'widgets/resources_tab_view.dart';
+import '../../../../core/services/user_preferences_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   const CourseDetailScreen({super.key});
@@ -16,15 +18,25 @@ class CourseDetailScreen extends StatefulWidget {
 class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTickerProviderStateMixin {
   CourseDetailViewModel? _viewModel;
   late TabController _tabController;
+  String _fullName = 'Guest User';
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       if (_viewModel != null) {
         _viewModel!.setActiveTab(_tabController.index);
       }
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    final prefsService = UserPreferencesService();
+    final name = await prefsService.getFullName();
+    setState(() {
+      _fullName = name;
     });
   }
 
@@ -69,7 +81,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                 SliverAppBar(
                   expandedHeight: size.height * 0.28,
                   pinned: true,
-                  backgroundColor: AppTheme.primaryTeal,
+                  backgroundColor: AppTheme.primaryBlue,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Navigator.pop(context),
@@ -84,19 +96,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                     ),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
-                    background: course.imageUrl.startsWith('assets/')
-                        ? Image.asset(
-                            course.imageUrl,
-                            fit: BoxFit.cover,
-                            color: Colors.black.withOpacity(0.4),
-                            colorBlendMode: BlendMode.srcOver,
-                          )
-                        : Image.network(
-                            course.imageUrl,
-                            fit: BoxFit.cover,
-                            color: Colors.black.withOpacity(0.4),
-                            colorBlendMode: BlendMode.srcOver,
-                          ),
+                    background: Image.asset(
+                      course.imageUrl,
+                      fit: BoxFit.cover,
+                      color: Colors.black.withOpacity(0.4),
+                      colorBlendMode: BlendMode.srcOver,
+                    ),
                   ),
                 ),
 
@@ -127,7 +132,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textDark,
+                            color: AppTheme.primaryBlue,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -135,7 +140,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                         // Stats (Rating, Reviews, Price, Instructor Avatar)
                         Row(
                           children: [
-                            const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                            const Icon(Icons.star_rounded, color: AppTheme.goldenAccent, size: 20),
                             const SizedBox(width: 4),
                             Text(
                               course.rating.toString(),
@@ -152,7 +157,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
-                                color: AppTheme.primaryTeal,
+                                color: AppTheme.goldenAccent,
                               ),
                             ),
                           ],
@@ -162,18 +167,18 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                         // Enrollment trigger bar
                         Row(
                           children: [
-                            // Sarah J. mini avatar
+                            // User mini avatar
                             const CircleAvatar(
                               radius: 18,
-                              backgroundImage: NetworkImage(
-                                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+                              backgroundImage: AssetImage(
+                                'assets/images/profile.jpg',
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Expanded(
+                            Expanded(
                               child: Text(
-                                'Sarah J.',
-                                style: TextStyle(
+                                _fullName,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.textDark,
                                   fontSize: 14,
@@ -185,11 +190,20 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                             SizedBox(
                               height: 40,
                               child: ElevatedButton(
-                                onPressed: course.isEnrolled || _viewModel!.isEnrolling
+                                onPressed: course.isEnrolled
                                     ? null
-                                    : () => _viewModel!.enrollInCourse(context),
+                                    : () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          AppRoutes.courseEnrollment,
+                                          arguments: course,
+                                        ).then((_) {
+                                          // Refresh view state in case user returns (e.g. if they completed flow)
+                                          setState(() {});
+                                        });
+                                      },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.primaryTeal,
+                                  backgroundColor: AppTheme.accentGreen,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
                                   shape: RoundedRectangleBorder(
@@ -221,8 +235,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                         // Tab Bar
                         TabBar(
                           controller: _tabController,
-                          indicatorColor: AppTheme.primaryTeal,
-                          labelColor: AppTheme.primaryTeal,
+                          indicatorColor: AppTheme.primaryBlue,
+                          labelColor: AppTheme.primaryBlue,
                           unselectedLabelColor: AppTheme.textLight,
                           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                           unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),

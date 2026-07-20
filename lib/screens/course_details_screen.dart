@@ -48,7 +48,7 @@ class CourseDetailsScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: Hero(
                 tag: 'course_image_$title', // Tag can be customized further for uniqueness
-                child: Image.network(
+                child: Image.asset(
                   imageUrl,
                   fit: BoxFit.cover,
                   color: Colors.black.withOpacity(0.2),
@@ -72,13 +72,13 @@ class CourseDetailsScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F9F90).withOpacity(0.1),
+                          color: const Color(0xFF163A5F).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
-                          'Oil & Gas',
+                          'English',
                           style: TextStyle(
-                            color: Color(0xFF0F9F90),
+                            color: Color(0xFF163A5F),
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -131,7 +131,7 @@ class CourseDetailsScreen extends StatelessWidget {
                     children: [
                       const CircleAvatar(
                         radius: 24,
-                        backgroundImage: NetworkImage('https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200'),
+                        backgroundImage: AssetImage('assets/images/profile.jpg'),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -169,7 +169,7 @@ class CourseDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'This comprehensive course covers all essential aspects of $title, designed specifically for professionals in the Oil & Gas industry. Learn industry-standard safety protocols, operational efficiency, and crisis management.',
+                    'This comprehensive course covers all essential aspects of $title, designed specifically for professionals in the English industry. Learn industry-standard safety protocols, operational efficiency, and crisis management.',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Color(0xFF475569),
@@ -249,7 +249,7 @@ class CourseDetailsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F9F90),
+                    color: Color(0xFF163A5F),
                   ),
                 ),
               ],
@@ -259,7 +259,7 @@ class CourseDetailsScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F9F90),
+                  backgroundColor: const Color(0xFF163A5F),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -305,7 +305,7 @@ class CourseDetailsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle, color: Color(0xFF0F9F90), size: 20),
+          const Icon(Icons.check_circle, color: Color(0xFF163A5F), size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -334,14 +334,14 @@ class CourseDetailsScreen extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: const Color(0xFF0F9F90).withOpacity(0.1),
+            color: const Color(0xFF163A5F).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Center(
             child: Text(
               '0$index',
               style: const TextStyle(
-                color: Color(0xFF0F9F90),
+                color: Color(0xFF163A5F),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -368,8 +368,9 @@ class CourseDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
-        trailing: const Icon(Icons.play_circle_fill, color: Color(0xFF0F9F90), size: 28),
+        trailing: const Icon(Icons.play_circle_fill, color: Color(0xFF163A5F), size: 28),
       ),
     );
   }
 }
+

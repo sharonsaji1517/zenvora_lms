@@ -35,7 +35,7 @@ class FeaturedCoursesList extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        childAspectRatio: 0.76,
+        childAspectRatio: 0.65,
       ),
       itemCount: courses.length,
       itemBuilder: (context, index) {
@@ -66,7 +66,7 @@ class FeaturedCoursesList extends StatelessWidget {
               children: [
                 // Course image and favorite button overlay
                 Expanded(
-                  flex: 5,
+                  flex: 4,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -75,13 +75,13 @@ class FeaturedCoursesList extends StatelessWidget {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),
                         ),
-                        child: Image.network(
-                          course.imageUrl,
+                        child: Image.asset(
+                          const [
+                            'assets/images/carousel/NZu2b.jpg',
+                            'assets/images/carousel/T2kGe.jpg',
+                            'assets/images/carousel/FlvdF.jpg',
+                          ][index % 3],
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: AppTheme.primaryTeal.withOpacity(0.1),
-                            child: const Icon(Icons.image, color: AppTheme.primaryTeal),
-                          ),
                         ),
                       ),
                       
@@ -118,7 +118,7 @@ class FeaturedCoursesList extends StatelessWidget {
                 
                 // Content section
                 Expanded(
-                  flex: 4,
+                  flex: 5,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -133,7 +133,7 @@ class FeaturedCoursesList extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textDark,
+                            color: AppTheme.brandDeepBlue,
                             height: 1.25,
                           ),
                         ),
@@ -143,7 +143,7 @@ class FeaturedCoursesList extends StatelessWidget {
                           children: [
                             const Icon(
                               Icons.star_rounded,
-                              color: Colors.amber,
+                              color: AppTheme.brandGoldenYellow,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -166,14 +166,73 @@ class FeaturedCoursesList extends StatelessWidget {
                           ],
                         ),
                         
-                        // Price tag
-                        Text(
-                          '\$${course.price.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: AppTheme.primaryTeal,
+                        // Progress bar (if enrolled/has progress)
+                        if (course.progress > 0)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Progress',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: AppTheme.textLight.withOpacity(0.9),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${(course.progress * 100).toInt()}%',
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      color: AppTheme.brandEmeraldGreen,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: LinearProgressIndicator(
+                                  value: course.progress,
+                                  minHeight: 3,
+                                  backgroundColor: AppTheme.borderLight,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.brandEmeraldGreen),
+                                ),
+                              ),
+                            ],
                           ),
+                        
+                        // Price tag & Action Button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '\$${course.price.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.brandGoldenYellow,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                gradient: AppTheme.brandBlueGreenGradient,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                course.progress > 0 ? 'Resume' : 'Enroll',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

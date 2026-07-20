@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_drawer.dart';
+import 'terms_and_conditions_screen.dart';
+import 'help_center_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,7 +12,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _darkModeEnabled = false;
-  bool _notificationsEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -79,30 +80,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         activeColor: colorScheme.primary,
                       ),
-                      const Divider(height: 1, indent: 56),
-                      
-                      // Push Notifications Switch
-                      SwitchListTile(
-                        value: _notificationsEnabled,
-                        onChanged: (bool value) {
-                          setState(() {
-                            _notificationsEnabled = value;
-                          });
-                        },
-                        title: const Text(
-                          'Push Notifications',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
-                        ),
-                        subtitle: const Text(
-                          'Receive system alerts and announcements',
-                          style: TextStyle(fontSize: 11.5),
-                        ),
-                        secondary: Icon(
-                          Icons.notifications_active_outlined,
-                          color: _notificationsEnabled ? colorScheme.primary : Colors.grey,
-                        ),
-                        activeColor: colorScheme.primary,
-                      ),
                     ],
                   ),
                 ),
@@ -121,35 +98,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
 
-                // Privacy Policy Card
+                // Legal & Info Card
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(color: Colors.grey[300]!, width: 0.8),
                   ),
-                  child: ListTile(
-                    leading: const Icon(Icons.info_outline, color: Colors.grey),
-                    title: const Text(
-                      'Privacy Policy',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
-                    ),
-                    subtitle: const Text(
-                      'Read terms, user agreements and data privacy policies',
-                      style: TextStyle(fontSize: 11.5),
-                    ),
-                    trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Navigating to Privacy Policy portal...'),
-                          backgroundColor: colorScheme.primary,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.info_outline, color: Colors.grey),
+                        title: const Text(
+                          'Privacy Policy',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
                         ),
-                      );
-                    },
+                        subtitle: const Text(
+                          'Read terms, user agreements and data privacy policies',
+                          style: TextStyle(fontSize: 11.5),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text('Navigating to Privacy Policy portal...'),
+                              backgroundColor: colorScheme.primary,
+                            ),
+                          );
+                        },
+                      ),
+                      const Divider(height: 1, indent: 56),
+                      ListTile(
+                        leading: const Icon(Icons.description_outlined, color: Colors.grey),
+                        title: const Text(
+                          'Terms & Conditions',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+                        ),
+                        subtitle: const Text(
+                          'Read our terms and conditions.',
+                          style: TextStyle(fontSize: 11.5),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const TermsAndConditionsScreen()),
+                          );
+                        },
+                      ),
+                      const Divider(height: 1, indent: 56),
+                      ListTile(
+                        leading: const Icon(Icons.support_agent_outlined, color: Colors.grey),
+                        title: const Text(
+                          'Help Center',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+                        ),
+                        subtitle: const Text(
+                          'Get support and contact us.',
+                          style: TextStyle(fontSize: 11.5),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -171,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '© 2026 Zenvora LMS Inc.',
+                  '© 2026 Easy Learn Inc.',
                   style: TextStyle(
                     fontSize: 10,
                     color: Colors.grey,

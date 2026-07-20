@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/services/user_preferences_service.dart';
 
-class LeftNavigationDrawer extends StatelessWidget {
+class LeftNavigationDrawer extends StatefulWidget {
   final String activeRoute;
 
   const LeftNavigationDrawer({
@@ -11,124 +12,154 @@ class LeftNavigationDrawer extends StatelessWidget {
   });
 
   @override
+  State<LeftNavigationDrawer> createState() => _LeftNavigationDrawerState();
+}
+
+class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
+  String _fullName = 'Guest User';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefsService = UserPreferencesService();
+    final name = await prefsService.getFullName();
+    setState(() {
+      _fullName = name;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.transparent,
       child: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+          gradient: AppTheme.brandThreeColorGradient,
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(24),
             bottomRight: Radius.circular(24),
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Drawer User Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+        child: Column(
+          children: [
+            // Drawer User Header with Blue -> Green Gradient Background
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.15),
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(24),
+                ),
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/profile.jpg',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey.shade200,
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.person,
+                                  size: 28,
+                                  color: Colors.grey.shade600,
+                                ),
+                              );
+                            },
                           ),
-                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Sarah J.',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _fullName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Rig Operator Trainee',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white70,
+                            SizedBox(height: 2),
+                            const Text(
+                              'Rig Operator Trainee',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white70,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              
-              const Divider(color: Colors.white24, height: 1),
-              
-              // Drawer Menu Items
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                  children: [
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.home_outlined,
-                      label: 'Home',
-                      route: AppRoutes.home,
-                      isActive: activeRoute == AppRoutes.home,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.school_outlined,
-                      label: 'My Courses',
-                      route: '/my-courses',
-                      isActive: false,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.alt_route_outlined,
-                      label: 'Learning Paths',
-                      route: '/paths',
-                      isActive: false,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.chat_bubble_outline_outlined,
-                      label: 'Community',
-                      route: '/community',
-                      isActive: false,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.person_outline_outlined,
-                      label: 'Profile',
-                      route: '/profile',
-                      isActive: false,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.settings_outlined,
-                      label: 'Settings',
-                      route: '/settings',
-                      isActive: false,
-                    ),
-                  ],
-                ),
+            ),
+            
+            const Divider(color: Colors.white24, height: 1),
+            
+            // Drawer Menu Items
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                children: [
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.home_outlined,
+                    label: 'Home',
+                    route: AppRoutes.home,
+                    isActive: widget.activeRoute == AppRoutes.home,
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.school_outlined,
+                    label: 'My Courses',
+                    route: AppRoutes.myCourses,
+                    isActive: widget.activeRoute == AppRoutes.myCourses,
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.person_outline_outlined,
+                    label: 'Profile',
+                    route: AppRoutes.profile,
+                    isActive: widget.activeRoute == AppRoutes.profile,
+                  ),
+                  _buildDrawerItem(
+                    context,
+                    icon: Icons.settings_outlined,
+                    label: 'Settings',
+                    route: AppRoutes.settings,
+                    isActive: widget.activeRoute == AppRoutes.settings,
+                  ),
+                ],
               ),
+            ),
 
-              const Divider(color: Colors.white24, height: 1),
+            const Divider(color: Colors.white24, height: 1),
 
-              // Logout Button
-              Padding(
+            // Logout Button at the bottom
+            SafeArea(
+              top: false,
+              child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: _buildDrawerItem(
                   context,
@@ -139,8 +170,8 @@ class LeftNavigationDrawer extends StatelessWidget {
                   isLogout: true,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -157,18 +188,18 @@ class LeftNavigationDrawer extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: isActive ? Colors.white.withOpacity(0.15) : Colors.transparent,
+        color: isActive ? AppTheme.brandGoldenYellow.withOpacity(0.18) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
         leading: Icon(
           icon,
-          color: isActive ? Colors.white : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
+          color: isActive ? AppTheme.brandGoldenYellow : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
         ),
         title: Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
+            color: isActive ? AppTheme.brandGoldenYellow : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
             fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
             fontSize: 15,
           ),
@@ -179,19 +210,13 @@ class LeftNavigationDrawer extends StatelessWidget {
         onTap: () {
           Navigator.pop(context); // Close Drawer
           if (isLogout) {
-            Navigator.pushReplacementNamed(context, AppRoutes.login);
-          } else if (route != activeRoute && route.startsWith('/')) {
-            // Check if route exists, else we can simulate/toast
-            if (route == AppRoutes.home) {
-              Navigator.pushReplacementNamed(context, route);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('"$label" module is coming soon!'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.login,
+              (Route<dynamic> route) => false,
+            );
+          } else if (route != widget.activeRoute) {
+            Navigator.pushReplacementNamed(context, route);
           }
         },
       ),

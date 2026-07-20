@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import '../core/services/user_preferences_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,12 +22,28 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Form is valid, push to Home Screen clearing current route
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      final email = _emailController.text.trim();
+      final prefsService = UserPreferencesService();
+      String nameToSave = 'Guest User';
+      if (email == 'sharon@gmail.com') {
+        nameToSave = 'Sharon Saji';
+      } else {
+        // Try to preserve existing name if the email matches
+        final currentEmail = await prefsService.getEmail();
+        if (currentEmail == email) {
+          nameToSave = await prefsService.getFullName();
+        }
+      }
+      await prefsService.saveUserData(nameToSave, email);
+
+      if (mounted) {
+        // Form is valid, push to Home Screen clearing current route
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     }
   }
 
@@ -48,11 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // App Branding Section
-                  Icon(
-                    Icons.school,
-                    size: 80,
-                    color: colorScheme.primary,
-                  ),
+                  Icon(Icons.school, size: 80, color: colorScheme.primary),
                   const SizedBox(height: 16),
                   Text(
                     'Zenvora LMS',
@@ -108,8 +121,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword 
-                              ? Icons.visibility_off_outlined 
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                         ),
                         onPressed: () {

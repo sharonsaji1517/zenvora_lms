@@ -14,22 +14,22 @@ class CategoryCoursesScreen extends StatelessWidget {
   final List<Map<String, dynamic>> _categoryCourses = const [
     {
       'title': 'Advanced Well Control',
-      'image': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/logistics2.jpg',
       'price': '\$149',
     },
     {
       'title': 'Offshore Safety Regulations',
-      'image': 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/logistics3.jpg',
       'price': '\$89',
     },
     {
       'title': 'Pipeline Inspection Basics',
-      'image': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/logistics1.jpg',
       'price': '\$199',
     },
     {
       'title': 'HSE Risk Assessment',
-      'image': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+      'image': 'assets/images/carousel/NZu2b.jpg',
       'price': '\$129',
     },
   ];

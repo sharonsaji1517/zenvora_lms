@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_drawer.dart';
+import '../core/services/user_preferences_service.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -10,11 +11,21 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String _fullName = 'Guest User';
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  Future<void> _loadUserData() async {
+    final prefsService = UserPreferencesService();
+    final name = await prefsService.getFullName();
+    setState(() {
+      _fullName = name;
+    });
   }
 
   @override
@@ -47,7 +58,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       {
         'title': 'Safety Guidelines for Offshore Crane Operators',
         'desc': 'A quick reminder to inspect the hoist lines and safety locks before shifting loads during high sea winds.',
-        'author': 'Sarah J.',
+        'author': _fullName,
         'time': 'Yesterday',
         'replies': '8 replies',
       },
@@ -64,8 +75,8 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       },
       {
         'title': 'Scheduled Server Maintenance',
-        'desc': 'Zenvora LMS portals will undergo system database updates this Saturday from 02:00 to 05:00 UTC. The app will be offline.',
-        'author': 'Zenvora Support',
+        'desc': 'Easy Learn portals will undergo system database updates this Saturday from 02:00 to 05:00 UTC. The app will be offline.',
+        'author': 'Easy Learn Support',
         'time': '1 day ago',
         'importance': 'NORMAL',
       },

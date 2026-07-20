@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../courses/models/course_model.dart';
+import '../../../core/services/user_preferences_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   int _currentBannerIndex = 0;
@@ -11,6 +12,15 @@ class HomeViewModel extends ChangeNotifier {
   
   HomeViewModel() {
     // Rely on loadHomeData() called by the View
+  }
+
+  String _fullName = 'Guest User';
+
+  // Getters
+  String get fullName => _fullName;
+  String get firstName {
+    if (_fullName.isEmpty) return 'User';
+    return _fullName.split(' ').first;
   }
 
   // Getters
@@ -36,10 +46,19 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final prefsService = UserPreferencesService();
+      _fullName = await prefsService.getFullName();
+      final wishlist = await prefsService.getWishlist();
+
       // Simulate API/network call delay
       await Future.delayed(const Duration(milliseconds: 500));
       _categories = getMockCategories();
       _courses = getMockCourses();
+      
+      // Update favorite status from wishlist
+      for (var course in _courses) {
+        course.isFavorite = wishlist.contains(course.id);
+      }
     } catch (e) {
       _errorMessage = 'Failed to load dashboard data. Please try again.';
     } finally {
@@ -62,11 +81,14 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite(String courseId) {
+  Future<void> toggleFavorite(String courseId) async {
     final index = _courses.indexWhere((c) => c.id == courseId);
     if (index != -1) {
       _courses[index].isFavorite = !_courses[index].isFavorite;
       notifyListeners();
+      
+      final prefsService = UserPreferencesService();
+      await prefsService.toggleWishlist(courseId);
     }
   }
 

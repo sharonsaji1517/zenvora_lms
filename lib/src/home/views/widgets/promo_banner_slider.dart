@@ -5,10 +5,7 @@ import '../../view_models/home_view_model.dart';
 class PromoBannerSlider extends StatefulWidget {
   final HomeViewModel viewModel;
 
-  const PromoBannerSlider({
-    super.key,
-    required this.viewModel,
-  });
+  const PromoBannerSlider({super.key, required this.viewModel});
 
   @override
   State<PromoBannerSlider> createState() => _PromoBannerSliderState();
@@ -19,18 +16,18 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
 
   final List<Map<String, String>> _banners = [
     {
-      'title': 'Oil & Gas Safety\nFundamentals\n(Start Now!)',
-      'image': 'assets/images/carousel/logistics1.jpg',
+      'title': ' Safety\nFundamentals\n(Start Now!)',
+      'image': 'assets/images/carousel/logistics3.jpg',
       'tag': 'RECOMMENDED',
     },
     {
       'title': 'Offshore Safety\nDrills & Simulation\nManuals Available',
-      'image': 'assets/images/carousel/logistics2.jpg',
+      'image': 'assets/images/carousel/logistics1.jpg',
       'tag': 'NEW EDITION',
     },
     {
       'title': 'Blowout Preventers\nAdvanced Certification\nClass Open',
-      'image': 'assets/images/carousel/logistics3.jpg',
+      'image': 'assets/images/carousel/logistics2.jpg',
       'tag': 'CERTIFICATE',
     },
   ];
@@ -38,7 +35,9 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: widget.viewModel.currentBannerIndex);
+    _pageController = PageController(
+      initialPage: widget.viewModel.currentBannerIndex,
+    );
   }
 
   @override
@@ -75,7 +74,11 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
                             return Container(
                               color: Colors.grey[800],
                               child: const Center(
-                                child: Icon(Icons.broken_image, color: Colors.white, size: 48),
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.white,
+                                  size: 48,
+                                ),
                               ),
                             );
                           },
@@ -88,9 +91,12 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryTeal,
+                                color: AppTheme.accentGreen,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -136,7 +142,7 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: widget.viewModel.currentBannerIndex == index
-                    ? AppTheme.primaryTeal
+                    ? AppTheme.primaryBlue
                     : AppTheme.borderLight,
               ),
             ),
