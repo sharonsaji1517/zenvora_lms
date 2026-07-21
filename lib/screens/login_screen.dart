@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import '../core/services/user_preferences_service.dart';
+import '../core/services/api_service.dart';
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,24 +27,60 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
-      final prefsService = UserPreferencesService();
-      String nameToSave = 'Guest User';
-      if (email == 'sharon@gmail.com') {
-        nameToSave = 'Sharon Saji';
-      } else {
-        // Try to preserve existing name if the email matches
-        final currentEmail = await prefsService.getEmail();
-        if (currentEmail == email) {
-          nameToSave = await prefsService.getFullName();
-        }
-      }
-      await prefsService.saveUserData(nameToSave, email);
+      debugPrint("Email: ${_emailController.text.trim()}");
+      debugPrint("Password: ${_passwordController.text.trim()}");
+      final apiService = ApiService();
 
-      if (mounted) {
-        // Form is valid, push to Home Screen clearing current route
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+      final response = await apiService.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response: ${response.body}");
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        try {
+          final responseData = jsonDecode(response.body);
+          if (responseData['success'] == true) {
+            final student = responseData['student'];
+            final prefsService = UserPreferencesService();
+            await prefsService.saveUserData(
+              student['name'] ?? 'User',
+              student['email'] ?? email,
+            );
+
+            if (mounted) {
+              // Form is valid, push to Home Screen clearing current route
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            }
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(responseData['message'] ?? 'Login failed'),
+                ),
+              );
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Failed to parse server response.')),
+            );
+          }
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login failed. Please check your credentials.'),
+            ),
+          );
+        }
       }
     }
   }
