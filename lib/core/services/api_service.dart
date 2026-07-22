@@ -45,4 +45,24 @@ class ApiService {
       return [];
     }
   }
+
+  Future<CourseModel?> getCourseById(int id) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/course/$id'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['course'] != null) {
+          return CourseModel.fromJson(data['course']);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }

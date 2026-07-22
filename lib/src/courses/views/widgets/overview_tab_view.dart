@@ -21,6 +21,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final maxLines = _isDescriptionExpanded ? null : 3;
+    final course = widget.course;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -39,8 +40,8 @@ class _OverviewTabViewState extends State<OverviewTabView> {
 
           // Course Description Text
           Text(
-            widget.course.shortDescription.isNotEmpty
-                ? widget.course.shortDescription
+            course.shortDescription.isNotEmpty
+                ? course.shortDescription
                 : 'No course description available.',
             maxLines: maxLines,
             overflow:
@@ -72,56 +73,53 @@ class _OverviewTabViewState extends State<OverviewTabView> {
             ),
           ),
 
-          const SizedBox(height: 20),
-          const Divider(color: AppTheme.borderLight, height: 1),
-          const SizedBox(height: 20),
-
-          // Key Learnings Title
-          Text(
-            'What you will learn',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
+          // Detailed Description (API long_description)
+          if (course.longDescription != null &&
+              course.longDescription!.trim().isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Divider(color: AppTheme.borderLight, height: 1),
+            const SizedBox(height: 20),
+            Text(
+              'Detailed Description',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 8),
+            Text(
+              course.longDescription!,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.textMedium,
+                height: 1.5,
+              ),
+            ),
+          ],
 
-          // Learnings List
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.course.learnings.length,
-            itemBuilder: (context, index) {
-              final learning = widget.course.learnings[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4.0),
-                      child: Icon(
-                        Icons.check_circle_outline,
-                        color: AppTheme.accentGreen,
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        learning,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.textDark,
-                          height: 1.35,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          // About Course (API about_course)
+          if (course.aboutCourse != null &&
+              course.aboutCourse!.trim().isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Divider(color: AppTheme.borderLight, height: 1),
+            const SizedBox(height: 20),
+            Text(
+              'About Course',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textDark,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              course.aboutCourse!,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppTheme.textMedium,
+                height: 1.5,
+              ),
+            ),
+          ],
         ],
       ),
     );

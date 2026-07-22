@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../models/course_model.dart';
+import '../../../courses/views/course_detail_screen.dart';
 
 class RigCoursesList extends StatelessWidget {
   final List<CourseModel> courses;
@@ -56,10 +57,15 @@ class RigCoursesList extends StatelessWidget {
           final course = courses[index];
           return GestureDetector(
             onTap: () {
-              Navigator.pushNamed(
+              Navigator.push(
                 context,
-                AppRoutes.courseDetail,
-                arguments: course,
+                MaterialPageRoute(
+                  builder: (context) => CourseDetailScreen(courseId: course.id),
+                  settings: RouteSettings(
+                    name: AppRoutes.courseDetail,
+                    arguments: course.id,
+                  ),
+                ),
               );
             },
             child: Container(

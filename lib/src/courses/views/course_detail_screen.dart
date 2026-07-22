@@ -6,7 +6,12 @@ import 'widgets/overview_tab_view.dart';
 import '../../../../core/services/user_preferences_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
-  const CourseDetailScreen({super.key});
+  final int? courseId;
+
+  const CourseDetailScreen({
+    super.key,
+    this.courseId,
+  });
 
   @override
   State<CourseDetailScreen> createState() => _CourseDetailScreenState();
@@ -33,31 +38,39 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
   Future<void> _loadUserData() async {
     final prefsService = UserPreferencesService();
     final name = await prefsService.getFullName();
-    setState(() {
-      _fullName = name;
-    });
+    if (mounted) {
+      setState(() {
+        _fullName = name;
+      });
+    }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_viewModel == null) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      final CourseModel selectedCourse = (args is CourseModel)
-          ? args
-          : CourseModel(
-              id: 1,
-              name: 'Course Details',
-              slug: 'course-details',
-              category: 'General',
-              categoryId: 1,
-              fee: '0',
-              durationDays: 0,
-              courseType: 'free',
-              shortDescription: 'Course details description',
-            );
+      int? extractedId = widget.courseId;
+      CourseModel? initialCourse;
 
-      _viewModel = CourseDetailViewModel(course: selectedCourse);
+      if (extractedId == null) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        if (args is int) {
+          extractedId = args;
+        } else if (args is CourseModel) {
+          extractedId = args.id;
+          initialCourse = args;
+        } else if (args != null) {
+          extractedId = int.tryParse(args.toString());
+        }
+      }
+
+      final int targetCourseId = extractedId ?? 1;
+
+      _viewModel = CourseDetailViewModel(
+        courseId: targetCourseId,
+        initialCourse: initialCourse,
+      );
+      _viewModel!.fetchCourseDetail();
       _tabController.index = _viewModel!.activeTabIndex;
     }
   }
@@ -99,18 +112,84 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
   @override
   Widget build(BuildContext context) {
     if (_viewModel == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+        ),
+      );
     }
 
-    final size = MediaQuery.of(context).size;
-    final course = _viewModel!.course;
+    return ListenableBuilder(
+      listenable: _viewModel!,
+      builder: (context, child) {
+        if (_viewModel!.isLoading && _viewModel!.course == null) {
+          return Scaffold(
+            backgroundColor: AppTheme.backgroundLight,
+            appBar: AppBar(
+              backgroundColor: AppTheme.primaryBlue,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+            ),
+          );
+        }
 
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundLight,
-      body: ListenableBuilder(
-        listenable: _viewModel!,
-        builder: (context, child) {
-          return NestedScrollView(
+        if (_viewModel!.errorMessage != null && _viewModel!.course == null) {
+          return Scaffold(
+            backgroundColor: AppTheme.backgroundLight,
+            appBar: AppBar(
+              backgroundColor: AppTheme.primaryBlue,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.redAccent,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _viewModel!.errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppTheme.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => _viewModel!.fetchCourseDetail(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryBlue,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        final course = _viewModel!.course!;
+        final size = MediaQuery.of(context).size;
+
+        return Scaffold(
+          backgroundColor: AppTheme.backgroundLight,
+          body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 // Collapsing Image Header Banner
@@ -157,7 +236,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Category Badge
+                        // Category Badge & Course Type Badge
                         Row(
                           children: [
                             Container(
@@ -176,6 +255,25 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                                 ),
                               ),
                             ),
+                            if (course.courseType.isNotEmpty) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accentGreen.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  course.courseType.toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.accentGreen,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -326,9 +424,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

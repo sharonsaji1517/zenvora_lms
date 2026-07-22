@@ -8,6 +8,8 @@ class CourseModel {
   final int durationDays;
   final String courseType;
   final String shortDescription;
+  final String? longDescription;
+  final String? aboutCourse;
   final String? image;
   bool isFavorite;
   double progress;
@@ -23,6 +25,8 @@ class CourseModel {
     required this.durationDays,
     required this.courseType,
     required this.shortDescription,
+    this.longDescription,
+    this.aboutCourse,
     this.image,
     this.isFavorite = false,
     this.progress = 0.0,
@@ -46,6 +50,8 @@ class CourseModel {
           : (int.tryParse(json['duration_days']?.toString() ?? '0') ?? 0),
       courseType: json['course_type']?.toString() ?? '',
       shortDescription: json['short_description']?.toString() ?? '',
+      longDescription: json['long_description']?.toString(),
+      aboutCourse: json['about_course']?.toString(),
       image: json['image']?.toString(),
     );
   }
