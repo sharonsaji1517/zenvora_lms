@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../models/course_model.dart';
+import '../../../../models/course_model.dart';
 
 class OverviewTabView extends StatefulWidget {
-  final Course course;
+  final CourseModel course;
 
   const OverviewTabView({
     super.key,
@@ -39,16 +39,19 @@ class _OverviewTabViewState extends State<OverviewTabView> {
 
           // Course Description Text
           Text(
-            widget.course.description,
+            widget.course.shortDescription.isNotEmpty
+                ? widget.course.shortDescription
+                : 'No course description available.',
             maxLines: maxLines,
-            overflow: _isDescriptionExpanded ? TextOverflow.clip : TextOverflow.ellipsis,
+            overflow:
+                _isDescriptionExpanded ? TextOverflow.clip : TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 14,
               color: AppTheme.textMedium,
               height: 1.5,
             ),
           ),
-          
+
           // Read More/Less Button
           GestureDetector(
             onTap: () {
@@ -68,7 +71,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
           const Divider(color: AppTheme.borderLight, height: 1),
           const SizedBox(height: 20),

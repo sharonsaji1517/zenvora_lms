@@ -1,15 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../courses/models/course_model.dart';
+import '../../../../models/course_model.dart';
 
 class RigCoursesList extends StatelessWidget {
-  final List<Course> courses;
+  final List<CourseModel> courses;
 
   const RigCoursesList({
     super.key,
     required this.courses,
   });
+
+  Widget _buildCourseImage(String? imagePath, int index) {
+    if (imagePath != null &&
+        imagePath.trim().isNotEmpty &&
+        (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/carousel/NZu2b.jpg',
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+    return Image.asset(
+      'assets/images/carousel/NZu2b.jpg',
+      fit: BoxFit.cover,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +39,7 @@ class RigCoursesList extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Text(
-            'No rig courses available for selected category.',
+            'No courses available.',
             style: TextStyle(color: AppTheme.textLight),
           ),
         ),
@@ -62,75 +83,77 @@ class RigCoursesList extends StatelessWidget {
                   // Image
                   Expanded(
                     flex: 11,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                      child: Image.asset(
-                        const [
-                          'assets/images/carousel/NZu2b.jpg',
-                          'assets/images/carousel/T2kGe.jpg',
-                          'assets/images/carousel/FlvdF.jpg',
-                        ][index % 3],
-                        fit: BoxFit.cover,
-                      ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16),
+                          ),
+                          child: _buildCourseImage(course.image, index),
+                        ),
+                        Positioned(
+                          top: 6,
+                          left: 6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.brandDeepBlue.withOpacity(0.85),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              course.category,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  
-                  // Text and progress
+
+                  // Text and info
                   Expanded(
                     flex: 9,
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            course.title,
+                            course.name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 13,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.brandDeepBlue,
-                              height: 1.25,
+                              height: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Progress',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppTheme.textLight.withOpacity(0.9),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${(course.progress * 100).toInt()}%',
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: AppTheme.brandEmeraldGreen,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                '${course.durationDays} Days',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppTheme.textLight,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                              const SizedBox(height: 4),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value: course.progress,
-                                  minHeight: 4,
-                                  backgroundColor: AppTheme.borderLight,
-                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.brandEmeraldGreen),
+                              Text(
+                                '₹${course.fee}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppTheme.brandEmeraldGreen,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],

@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/course_model.dart';
+import '../../../models/course_model.dart';
 
 class CourseDetailViewModel extends ChangeNotifier {
-  final Course course;
+  final CourseModel course;
   int _activeTabIndex = 0;
   final Set<String> _expandedModuleIds = {};
   bool _isEnrolling = false;
 
-  CourseDetailViewModel({required this.course}) {
-    // Expand the first module by default
-    if (course.modules.isNotEmpty) {
-      _expandedModuleIds.add(course.modules.first.id);
-    }
-  }
+  CourseDetailViewModel({required this.course});
 
   // Getters
   int get activeTabIndex => _activeTabIndex;
@@ -47,18 +42,17 @@ class CourseDetailViewModel extends ChangeNotifier {
     _isEnrolling = true;
     notifyListeners();
 
-    // Simulate payment / enrollment process
-    await Future.delayed(const Duration(milliseconds: 1500));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     course.isEnrolled = true;
-    course.progress = 0.0; // Starts at 0
+    course.progress = 0.0;
     _isEnrolling = false;
     notifyListeners();
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Successfully enrolled in "${course.title}"!'),
+          content: Text('Successfully enrolled in "${course.name}"!'),
           backgroundColor: const Color(0xFF163A5F),
         ),
       );

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/routes/app_routes.dart';
-import '../models/course_model.dart';
+import '../../../../models/course_model.dart';
 import '../view_models/course_detail_view_model.dart';
 import 'widgets/overview_tab_view.dart';
-import 'widgets/syllabus_tab_view.dart';
-import 'widgets/resources_tab_view.dart';
 import '../../../../core/services/user_preferences_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
@@ -15,7 +12,8 @@ class CourseDetailScreen extends StatefulWidget {
   State<CourseDetailScreen> createState() => _CourseDetailScreenState();
 }
 
-class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTickerProviderStateMixin {
+class _CourseDetailScreenState extends State<CourseDetailScreen>
+    with SingleTickerProviderStateMixin {
   CourseDetailViewModel? _viewModel;
   late TabController _tabController;
   String _fullName = 'Guest User';
@@ -44,10 +42,21 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_viewModel == null) {
-      // Safely extract the course from routes argument, or use a default mock course fallback
       final args = ModalRoute.of(context)?.settings.arguments;
-      final Course selectedCourse = (args is Course) ? args : getMockCourses().first;
-      
+      final CourseModel selectedCourse = (args is CourseModel)
+          ? args
+          : CourseModel(
+              id: 1,
+              name: 'Course Details',
+              slug: 'course-details',
+              category: 'General',
+              categoryId: 1,
+              fee: '0',
+              durationDays: 0,
+              courseType: 'free',
+              shortDescription: 'Course details description',
+            );
+
       _viewModel = CourseDetailViewModel(course: selectedCourse);
       _tabController.index = _viewModel!.activeTabIndex;
     }
@@ -58,6 +67,33 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
     _tabController.dispose();
     _viewModel?.dispose();
     super.dispose();
+  }
+
+  Widget _buildFlexibleHeaderImage(String? imagePath) {
+    if (imagePath != null &&
+        imagePath.trim().isNotEmpty &&
+        (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        color: Colors.black.withOpacity(0.4),
+        colorBlendMode: BlendMode.srcOver,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/carousel/NZu2b.jpg',
+            fit: BoxFit.cover,
+            color: Colors.black.withOpacity(0.4),
+            colorBlendMode: BlendMode.srcOver,
+          );
+        },
+      );
+    }
+    return Image.asset(
+      'assets/images/carousel/NZu2b.jpg',
+      fit: BoxFit.cover,
+      color: Colors.black.withOpacity(0.4),
+      colorBlendMode: BlendMode.srcOver,
+    );
   }
 
   @override
@@ -96,12 +132,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                     ),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Image.asset(
-                      course.imageUrl,
-                      fit: BoxFit.cover,
-                      color: Colors.black.withOpacity(0.4),
-                      colorBlendMode: BlendMode.srcOver,
-                    ),
+                    background: _buildFlexibleHeaderImage(course.image),
                   ),
                 ),
 
@@ -126,9 +157,32 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // Category Badge
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppTheme.brandDeepBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                course.category,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.brandDeepBlue,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
                         // Title
                         Text(
-                          course.title,
+                          course.name,
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -137,23 +191,20 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                         ),
                         const SizedBox(height: 12),
 
-                        // Stats (Rating, Reviews, Price, Instructor Avatar)
+                        // Stats (Duration, Price)
                         Row(
                           children: [
-                            const Icon(Icons.star_rounded, color: AppTheme.goldenAccent, size: 20),
+                            const Icon(Icons.access_time_rounded,
+                                color: AppTheme.textLight, size: 18),
                             const SizedBox(width: 4),
                             Text(
-                              course.rating.toString(),
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '(${course.reviewCount} Reviews)',
-                              style: const TextStyle(color: AppTheme.textLight, fontSize: 12),
+                              '${course.durationDays} Days',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 13),
                             ),
                             const Spacer(),
                             Text(
-                              '\$${course.price.toStringAsFixed(2)}',
+                              '₹${course.fee}',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
@@ -167,7 +218,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                         // Enrollment trigger bar
                         Row(
                           children: [
-                            // User mini avatar
                             const CircleAvatar(
                               radius: 18,
                               backgroundImage: AssetImage(
@@ -193,19 +243,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                                 onPressed: course.isEnrolled
                                     ? null
                                     : () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AppRoutes.courseEnrollment,
-                                          arguments: course,
-                                        ).then((_) {
-                                          // Refresh view state in case user returns (e.g. if they completed flow)
-                                          setState(() {});
-                                        });
+                                        _viewModel!.enrollInCourse(context);
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.accentGreen,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -220,7 +264,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                                         ),
                                       )
                                     : Text(
-                                        course.isEnrolled ? 'Enrolled' : 'Enroll Now',
+                                        course.isEnrolled
+                                            ? 'Enrolled'
+                                            : 'Enroll Now',
                                         style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -238,8 +284,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
                           indicatorColor: AppTheme.primaryBlue,
                           labelColor: AppTheme.primaryBlue,
                           unselectedLabelColor: AppTheme.textLight,
-                          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                          labelStyle: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14),
+                          unselectedLabelStyle: const TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 14),
                           tabs: const [
                             Tab(text: 'Overview'),
                             Tab(text: 'Syllabus'),
@@ -256,8 +304,26 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> with SingleTick
               controller: _tabController,
               children: [
                 OverviewTabView(course: course),
-                SyllabusTabView(viewModel: _viewModel!),
-                ResourcesTabView(course: course),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      'Syllabus for ${course.name} will be available soon.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppTheme.textMedium),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      'Resources for ${course.name} will be available soon.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppTheme.textMedium),
+                    ),
+                  ),
+                ),
               ],
             ),
           );

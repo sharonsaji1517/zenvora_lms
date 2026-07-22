@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../courses/models/course_model.dart';
+import '../../../../models/course_model.dart';
 import '../../view_models/home_view_model.dart';
 
 class FeaturedCoursesList extends StatelessWidget {
   final HomeViewModel viewModel;
-  final List<Course> courses;
+  final List<CourseModel> courses;
 
   const FeaturedCoursesList({
     super.key,
     required this.viewModel,
     required this.courses,
   });
+
+  Widget _buildCourseImage(String? imagePath, int index) {
+    if (imagePath != null &&
+        imagePath.trim().isNotEmpty &&
+        (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
+      return Image.network(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/images/carousel/NZu2b.jpg',
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+    return Image.asset(
+      'assets/images/carousel/NZu2b.jpg',
+      fit: BoxFit.cover,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +42,7 @@ class FeaturedCoursesList extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Text(
-            'No featured courses available for selected category.',
+            'No courses available.',
             style: TextStyle(color: AppTheme.textLight),
           ),
         ),
@@ -75,16 +96,31 @@ class FeaturedCoursesList extends StatelessWidget {
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16),
                         ),
-                        child: Image.asset(
-                          const [
-                            'assets/images/carousel/NZu2b.jpg',
-                            'assets/images/carousel/T2kGe.jpg',
-                            'assets/images/carousel/FlvdF.jpg',
-                          ][index % 3],
-                          fit: BoxFit.cover,
+                        child: _buildCourseImage(course.image, index),
+                      ),
+
+                      // Category Tag Badge
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.brandDeepBlue.withOpacity(0.85),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            course.category,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                      
+
                       // Favorite button
                       Positioned(
                         top: 8,
@@ -105,8 +141,12 @@ class FeaturedCoursesList extends StatelessWidget {
                               ],
                             ),
                             child: Icon(
-                              course.isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: course.isFavorite ? Colors.redAccent : AppTheme.textLight,
+                              course.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: course.isFavorite
+                                  ? Colors.redAccent
+                                  : AppTheme.textLight,
                               size: 18,
                             ),
                           ),
@@ -115,7 +155,7 @@ class FeaturedCoursesList extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 // Content section
                 Expanded(
                   flex: 5,
@@ -127,7 +167,7 @@ class FeaturedCoursesList extends StatelessWidget {
                       children: [
                         // Title
                         Text(
-                          course.title,
+                          course.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -137,80 +177,33 @@ class FeaturedCoursesList extends StatelessWidget {
                             height: 1.25,
                           ),
                         ),
-                        
-                        // Rating & Reviews
+
+                        // Duration days
                         Row(
                           children: [
                             const Icon(
-                              Icons.star_rounded,
-                              color: AppTheme.brandGoldenYellow,
-                              size: 16,
+                              Icons.access_time_rounded,
+                              color: AppTheme.textLight,
+                              size: 14,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              course.rating.toString(),
+                              '${course.durationDays} Days',
                               style: const TextStyle(
                                 fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 color: AppTheme.textDark,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '(${course.reviewCount})',
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: AppTheme.textLight,
                               ),
                             ),
                           ],
                         ),
-                        
-                        // Progress bar (if enrolled/has progress)
-                        if (course.progress > 0)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Progress',
-                                    style: TextStyle(
-                                      fontSize: 9,
-                                      color: AppTheme.textLight.withOpacity(0.9),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${(course.progress * 100).toInt()}%',
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      color: AppTheme.brandEmeraldGreen,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 2),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(2),
-                                child: LinearProgressIndicator(
-                                  value: course.progress,
-                                  minHeight: 3,
-                                  backgroundColor: AppTheme.borderLight,
-                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.brandEmeraldGreen),
-                                ),
-                              ),
-                            ],
-                          ),
-                        
-                        // Price tag & Action Button
+
+                        // Fee tag & Action Button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '\$${course.price.toStringAsFixed(2)}',
+                              '₹${course.fee}',
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w800,
@@ -218,14 +211,15 @@ class FeaturedCoursesList extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
                                 gradient: AppTheme.brandBlueGreenGradient,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(
-                                course.progress > 0 ? 'Resume' : 'Enroll',
-                                style: const TextStyle(
+                              child: const Text(
+                                'Enroll',
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,

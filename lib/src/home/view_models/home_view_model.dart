@@ -1,15 +1,18 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../courses/models/course_model.dart';
+import '../../../models/category_model.dart';
+import '../../../models/course_model.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/services/user_preferences_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   int _currentBannerIndex = 0;
   String _selectedCategoryId = '';
-  List<Course> _courses = [];
-  List<CourseCategory> _categories = [];
+  List<CourseModel> _courses = [];
+  List<CategoryModel> _categories = [];
   bool _isLoading = false;
   String? _errorMessage;
-  
+
   HomeViewModel() {
     // Rely on loadHomeData() called by the View
   }
@@ -23,22 +26,48 @@ class HomeViewModel extends ChangeNotifier {
     return _fullName.split(' ').first;
   }
 
-  // Getters
   int get currentBannerIndex => _currentBannerIndex;
   String get selectedCategoryId => _selectedCategoryId;
-  List<CourseCategory> get categories => _categories;
+  List<CategoryModel> get categories => _categories;
+  List<CourseModel> get courses => _courses;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  
-  List<Course> get rigAssociatedCourses => 
-      _courses.where((c) => c.isRigAssociated).toList();
 
-  List<Course> get rigCourses => rigAssociatedCourses;
+  List<CourseModel> get rigAssociatedCourses => _courses;
+  List<CourseModel> get rigCourses => _courses;
+  List<CourseModel> get featuredCourses => _courses;
 
-  List<Course> get featuredCourses => 
-      _courses.where((c) => c.isFeatured).toList();
+  Future<void> loadCategories() async {
+    try {
+      final apiService = ApiService();
+      final response = await apiService.getCategories();
 
-  List<Course> get courses => _courses;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['categories'] != null) {
+          final List list = data['categories'];
+          _categories = list.map((item) => CategoryModel.fromJson(item)).toList();
+        } else {
+          _categories = [];
+        }
+      } else {
+        _categories = [];
+      }
+    } catch (e) {
+      _categories = [];
+    }
+    notifyListeners();
+  }
+
+  Future<void> loadCourses() async {
+    try {
+      final apiService = ApiService();
+      _courses = await apiService.getCourses();
+    } catch (e) {
+      _courses = [];
+    }
+    notifyListeners();
+  }
 
   Future<void> loadHomeData() async {
     _isLoading = true;
@@ -50,14 +79,12 @@ class HomeViewModel extends ChangeNotifier {
       _fullName = await prefsService.getFullName();
       final wishlist = await prefsService.getWishlist();
 
-      // Simulate API/network call delay
-      await Future.delayed(const Duration(milliseconds: 500));
-      _categories = getMockCategories();
-      _courses = getMockCourses();
-      
+      await loadCategories();
+      await loadCourses();
+
       // Update favorite status from wishlist
       for (var course in _courses) {
-        course.isFavorite = wishlist.contains(course.id);
+        course.isFavorite = wishlist.contains(course.id.toString());
       }
     } catch (e) {
       _errorMessage = 'Failed to load dashboard data. Please try again.';
@@ -81,22 +108,24 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite(String courseId) async {
-    final index = _courses.indexWhere((c) => c.id == courseId);
+  Future<void> toggleFavorite(dynamic courseId) async {
+    final String idStr = courseId.toString();
+    final index = _courses.indexWhere((c) => c.id.toString() == idStr);
     if (index != -1) {
       _courses[index].isFavorite = !_courses[index].isFavorite;
       notifyListeners();
-      
+
       final prefsService = UserPreferencesService();
-      await prefsService.toggleWishlist(courseId);
+      await prefsService.toggleWishlist(idStr);
     }
   }
 
-  // Filtered courses based on category selection (if grid is tapped)
-  List<Course> getFilteredCourses() {
+  List<CourseModel> getFilteredCourses() {
     if (_selectedCategoryId.isEmpty) {
       return _courses;
     }
-    return _courses.where((c) => c.categoryId == _selectedCategoryId).toList();
+    return _courses
+        .where((c) => c.categoryId.toString() == _selectedCategoryId)
+        .toList();
   }
 }
