@@ -17,6 +17,7 @@ class LeftNavigationDrawer extends StatefulWidget {
 
 class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
   String _fullName = 'Guest User';
+  bool _isLoggingOut = false;
 
   @override
   void initState() {
@@ -196,29 +197,59 @@ class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
           icon,
           color: isActive ? AppTheme.brandGoldenYellow : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
         ),
-        title: Text(
-          label,
-          style: TextStyle(
-            color: isActive ? AppTheme.brandGoldenYellow : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
-            fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-            fontSize: 15,
-          ),
-        ),
+        title: _isLoggingOut && isLogout
+            ? const Align(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
+                  height: 18,
+                  width: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            : Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? AppTheme.brandGoldenYellow : (isLogout ? Colors.white.withOpacity(0.8) : Colors.white),
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                  fontSize: 15,
+                ),
+              ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        onTap: () {
-          Navigator.pop(context); // Close Drawer
-          if (isLogout) {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.login,
-              (Route<dynamic> route) => false,
-            );
-          } else if (route != widget.activeRoute) {
-            Navigator.pushReplacementNamed(context, route);
-          }
-        },
+        onTap: _isLoggingOut
+            ? null
+            : () async {
+                if (isLogout) {
+                  setState(() {
+                    _isLoggingOut = true;
+                  });
+                  final success = await UserPreferencesService().logoutUser(context);
+                  if (success) {
+                    debugPrint("Whether navigation to Login Screen is executed: true");
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        AppRoutes.login,
+                        (Route<dynamic> route) => false,
+                      );
+                    }
+                  } else {
+                    debugPrint("Whether navigation to Login Screen is executed: false");
+                    if (mounted) {
+                      setState(() {
+                        _isLoggingOut = false;
+                      });
+                    }
+                  }
+                } else if (route != widget.activeRoute) {
+                  Navigator.pop(context); // Close Drawer
+                  Navigator.pushReplacementNamed(context, route);
+                }
+              },
       ),
     );
   }

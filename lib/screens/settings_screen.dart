@@ -193,7 +193,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  '© 2026 Easy Learn Inc.',
+                  '© 2026 Zenvora',
                   style: TextStyle(
                     fontSize: 10,
                     color: Colors.grey,

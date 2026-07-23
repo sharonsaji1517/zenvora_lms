@@ -65,10 +65,12 @@ class LoginViewModel extends ChangeNotifier {
 
       if (responseData["success"] == true) {
         final student = responseData["student"];
+        final token = responseData["token"]?.toString() ?? '';
         final prefsService = UserPreferencesService();
         await prefsService.saveUserData(
-          student["name"] ?? 'User',
-          student["email"] ?? _email,
+          student?["name"]?.toString() ?? 'User',
+          student?["email"]?.toString() ?? _email,
+          token: token,
         );
 
         _isLoading = false;

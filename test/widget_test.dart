@@ -15,7 +15,7 @@ void main() {
     await tester.pumpWidget(const ZenvoraApp());
 
     // Verify that our login screen is displayed.
-    expect(find.text('Easy Learn'), findsOneWidget);
+    expect(find.text('Zenvora LMS'), findsOneWidget);
     expect(find.text('Login'), findsOneWidget);
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_drawer.dart';
 import '../core/services/user_preferences_service.dart';
 import '../core/theme/app_theme.dart';
+import '../core/routes/app_routes.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -830,48 +831,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    bool isLoggingOut = false;
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            'Logout',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text(
-            'Are you sure you want to log out of your account?',
-            style: TextStyle(color: AppTheme.textMedium),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  color: AppTheme.textMedium,
-                  fontWeight: FontWeight.bold,
-                ),
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // No backend required as per instructions
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                elevation: 0,
+              title: const Text(
+                'Logout',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: const Text('Logout'),
-            ),
-          ],
+              content: const Text(
+                'Are you sure you want to logout from Zenvora?',
+                style: TextStyle(color: AppTheme.textMedium),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoggingOut
+                      ? null
+                      : () => Navigator.pop(dialogContext),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: AppTheme.textMedium,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: isLoggingOut
+                      ? null
+                      : () async {
+                          setState(() {
+                            isLoggingOut = true;
+                          });
+                          final success = await UserPreferencesService().logoutUser(context);
+                          if (success) {
+                            debugPrint("Whether navigation to Login Screen is executed: true");
+                            if (dialogContext.mounted) {
+                              Navigator.pop(dialogContext); // Close confirm dialog
+                            }
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                AppRoutes.login,
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+                          } else {
+                            debugPrint("Whether navigation to Login Screen is executed: false");
+                            if (dialogContext.mounted) {
+                              setState(() {
+                                isLoggingOut = false;
+                              });
+                            }
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: isLoggingOut
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Logout'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

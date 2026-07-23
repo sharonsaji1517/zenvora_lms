@@ -111,7 +111,7 @@ class SignUpViewModel extends ChangeNotifier {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Account created successfully! Welcome to Easy Learn.'),
+          content: Text('Account created successfully! Welcome to Zenvora.'),
           backgroundColor: Color(0xFF163A5F),
         ),
       );

@@ -65,4 +65,15 @@ class ApiService {
       return null;
     }
   }
+
+  Future<http.Response> logout(String token) async {
+    return await http.post(
+      Uri.parse('$baseUrl/logout'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+  }
 }

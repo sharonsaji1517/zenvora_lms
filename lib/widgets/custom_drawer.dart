@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/login_screen.dart';
+import '../core/routes/app_routes.dart';
 import '../screens/home_screen.dart';
 import '../src/courses/views/my_courses_screen.dart';
 import '../screens/profile_screen.dart';
@@ -7,22 +7,12 @@ import '../screens/settings_screen.dart';
 import '../core/theme/app_theme.dart';
 import '../core/services/user_preferences_service.dart';
 
-enum DrawerItem {
-  home,
-  myCourses,
-  learningPaths,
-  community,
-  profile,
-  settings,
-}
+enum DrawerItem { home, myCourses, learningPaths, community, profile, settings }
 
 class CustomDrawer extends StatefulWidget {
   final DrawerItem activeItem;
 
-  const CustomDrawer({
-    super.key,
-    required this.activeItem,
-  });
+  const CustomDrawer({super.key, required this.activeItem});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -49,43 +39,79 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   void _navigateTo(BuildContext context, Widget screen) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (context) => screen));
   }
 
   void _showLogoutDialog(BuildContext context) {
+    bool isLoggingOut = false;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Confirm Logout'),
-          content: const Text('Are you sure you want to log out of Easy Learn?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss Dialog
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss Dialog
-                // Clear stack and navigate back to Login Screen
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text(
-                'Logout',
-                style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Logout'),
+              content: const Text('Are you sure you want to logout from Zenvora?'),
+              actions: [
+                TextButton(
+                  onPressed: isLoggingOut
+                      ? null
+                      : () {
+                          Navigator.of(dialogContext).pop(); // Dismiss Dialog
+                        },
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                TextButton(
+                  onPressed: isLoggingOut
+                      ? null
+                      : () async {
+                          setState(() {
+                            isLoggingOut = true;
+                          });
+                          final success = await UserPreferencesService().logoutUser(context);
+                          if (success) {
+                            debugPrint("Whether navigation to Login Screen is executed: true");
+                            if (dialogContext.mounted) {
+                              Navigator.of(dialogContext).pop(); // Close confirm dialog
+                            }
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                AppRoutes.login,
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+                          } else {
+                            debugPrint("Whether navigation to Login Screen is executed: false");
+                            if (dialogContext.mounted) {
+                              setState(() {
+                                isLoggingOut = false;
+                              });
+                            }
+                          }
+                        },
+                  child: isLoggingOut
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.redAccent,
+                          ),
+                        )
+                      : const Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -99,9 +125,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         children: [
           // Drawer Profile Header
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-            ),
+            decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
             currentAccountPicture: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -127,20 +151,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
             accountName: Text(
               _fullName,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             accountEmail: Text(
               _email,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
             ),
           ),
-          
+
           // Navigation Items List
           Expanded(
             child: ListView(
@@ -181,9 +199,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ],
             ),
           ),
-          
+
           const Divider(),
-          
+
           // Logout item
           Padding(
             padding: const EdgeInsets.all(12.0),
@@ -227,7 +245,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
       child: ListTile(
         leading: Icon(
           isSelected ? activeIcon : icon,
-          color: isSelected ? colorScheme.primary : Colors.grey[700] ?? Colors.black54,
+          color: isSelected
+              ? colorScheme.primary
+              : Colors.grey[700] ?? Colors.black54,
         ),
         title: Text(
           label,
@@ -239,9 +259,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         selected: isSelected,
         selectedTileColor: AppTheme.primaryBlue.withOpacity(0.12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onTap: isSelected ? () => Navigator.of(context).pop() : onTap,
       ),
     );

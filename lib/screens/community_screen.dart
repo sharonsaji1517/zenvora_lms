@@ -75,8 +75,8 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       },
       {
         'title': 'Scheduled Server Maintenance',
-        'desc': 'Easy Learn portals will undergo system database updates this Saturday from 02:00 to 05:00 UTC. The app will be offline.',
-        'author': 'Easy Learn Support',
+        'desc': 'Zenvora portals will undergo system database updates this Saturday from 02:00 to 05:00 UTC. The app will be offline.',
+        'author': 'Zenvora Support',
         'time': '1 day ago',
         'importance': 'NORMAL',
       },
