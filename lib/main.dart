@@ -15,7 +15,7 @@ class ZenvoraApp extends StatelessWidget {
       title: 'Zenvora',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
     );
   }

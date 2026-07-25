@@ -545,7 +545,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-          child: _buildSettingsTile(Icons.edit_outlined, 'Edit Profile'),
+          child: _buildSettingsTile(
+            Icons.edit_outlined,
+            'Edit Profile',
+            onTap: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                AppRoutes.editProfile,
+              );
+              if (result == true) {
+                _loadUserData();
+              }
+            },
+          ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -729,7 +741,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: AppTheme.brandOceanBlue.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.route_rounded, color: AppTheme.brandOceanBlue, size: 24),
+                child: const Icon(
+                  Icons.route_rounded,
+                  color: AppTheme.brandOceanBlue,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -758,12 +774,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Coming Soon'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                Navigator.pushNamed(context, AppRoutes.classroom, arguments: 4);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryBlue,
@@ -776,10 +787,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: const Text(
                 'Go To Classroom',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -869,11 +877,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() {
                             isLoggingOut = true;
                           });
-                          final success = await UserPreferencesService().logoutUser(context);
+                          final success = await UserPreferencesService()
+                              .logoutUser(context);
                           if (success) {
-                            debugPrint("Whether navigation to Login Screen is executed: true");
+                            debugPrint(
+                              "Whether navigation to Login Screen is executed: true",
+                            );
                             if (dialogContext.mounted) {
-                              Navigator.pop(dialogContext); // Close confirm dialog
+                              Navigator.pop(
+                                dialogContext,
+                              ); // Close confirm dialog
                             }
                             if (context.mounted) {
                               Navigator.pushNamedAndRemoveUntil(
@@ -883,7 +896,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               );
                             }
                           } else {
-                            debugPrint("Whether navigation to Login Screen is executed: false");
+                            debugPrint(
+                              "Whether navigation to Login Screen is executed: false",
+                            );
                             if (dialogContext.mounted) {
                               setState(() {
                                 isLoggingOut = false;

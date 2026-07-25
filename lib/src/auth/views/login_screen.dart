@@ -311,71 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-
-                        // Social Login Divider
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Divider(color: AppTheme.borderLight),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'Or continue with',
-                                style: TextStyle(
-                                  color: AppTheme.textLight.withOpacity(0.8),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Divider(color: AppTheme.borderLight),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Google Login Button
-                        OutlinedButton(
-                          onPressed: _viewModel.isLoading
-                              ? null
-                              : () => _viewModel.loginWithGoogle(context),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppTheme.borderLight),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            foregroundColor: AppTheme.textDark,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/icon/app_icon.png',
-                                height: 22,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(
-                                      Icons.g_mobiledata_rounded,
-                                      color: Colors.redAccent,
-                                      size: 26,
-                                    ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Google',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),

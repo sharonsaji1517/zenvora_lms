@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../routes/app_routes.dart';
-import '../theme/app_theme.dart';
 import 'api_service.dart';
 
 class UserPreferencesService {
@@ -10,6 +8,17 @@ class UserPreferencesService {
   static const String _keyEmail = 'user_email';
   static const String _keyToken = 'user_token';
   static const String _keyWishlist = 'user_wishlist';
+  static const String _keyOnboardingCompleted = 'onboarding_completed';
+
+  Future<bool> isOnboardingCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyOnboardingCompleted) ?? false;
+  }
+
+  Future<void> setOnboardingCompleted(bool completed) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyOnboardingCompleted, completed);
+  }
 
   Future<void> saveUserData(String fullName, String email, {String? token}) async {
     final prefs = await SharedPreferences.getInstance();

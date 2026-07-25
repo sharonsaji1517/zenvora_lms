@@ -38,16 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: AppTheme.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: ListenableBuilder(
         listenable: _viewModel,
         builder: (context, child) {
@@ -57,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Premium Header Section with Gradients
                 Container(
                   width: double.infinity,
-                  height: size.height * 0.32,
+                  height: size.height * 0.40,
                   decoration: const BoxDecoration(
                     gradient: AppTheme.primaryGradient,
                   ),
@@ -87,16 +78,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        // const SizedBox(height: 12),
-                        // const Text(
-                        //   'Create Account',
-                        //   style: TextStyle(
-                        //     fontSize: 24,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Colors.white,
-                        //     letterSpacing: 0.8,
-                        //   ),
-                        // ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Zenvora LMS',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Empowering Oil & Gas Education',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.85),
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
+                        ),
                       ],
                     ),
                   ),
@@ -104,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 // Card Layout Container Overlay
                 Transform.translate(
-                  offset: const Offset(0, -30),
+                  offset: const Offset(0, -15),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
@@ -177,18 +178,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _viewModel.fullName.isEmpty
-                              ? 'Guest User'
-                              : _viewModel.fullName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.textDark,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -308,8 +297,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: Checkbox(
                                 value: _viewModel.acceptTerms,
                                 onChanged: (val) {
-                                  if (val != null)
+                                  if (val != null) {
                                     _viewModel.setAcceptTerms(val);
+                                  }
                                 },
                                 activeColor: AppTheme.primaryBlue,
                               ),

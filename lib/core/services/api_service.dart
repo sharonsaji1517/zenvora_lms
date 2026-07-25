@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/course_model.dart';
+import '../../src/profile/models/student_profile_model.dart';
+import '../../src/classroom/models/classroom_model.dart';
+import 'user_preferences_service.dart';
 
 class ApiService {
   static const String baseUrl = "https://zenvora.trynet.work/api";
@@ -75,5 +78,80 @@ class ApiService {
         'Authorization': 'Bearer $token',
       },
     );
+  }
+
+  Future<StudentProfileModel?> getStudentProfile() async {
+    try {
+      final token = await UserPreferencesService().getToken();
+      if (token == null || token.isEmpty) {
+        return null;
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/student/profile'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['student'] != null) {
+          return StudentProfileModel.fromJson(data['student']);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<http.Response> updateStudentProfile({
+    required String token,
+    required String name,
+    required String phone,
+    required String place,
+  }) async {
+    return await http.put(
+      Uri.parse('$baseUrl/student/profile'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'name': name,
+        'phone': phone,
+        'place': place,
+      }),
+    );
+  }
+
+  Future<ClassroomModel?> getStudentClassroom(int courseId) async {
+    try {
+      final token = await UserPreferencesService().getToken();
+      if (token == null || token.isEmpty) {
+        return null;
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/student/classroom/$courseId'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          return ClassroomModel.fromJson(data);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }
