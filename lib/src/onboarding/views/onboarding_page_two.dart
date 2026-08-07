@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../../viewmodels/app_settings_provider.dart';
 
 class OnboardingPageTwo extends StatelessWidget {
   const OnboardingPageTwo({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<AppSettingsProvider>();
+    final appName = settings.appName.isNotEmpty ? settings.appName : 'Zenvora';
+
     return Container(
       color: AppTheme.white,
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -15,9 +20,9 @@ class OnboardingPageTwo extends StatelessWidget {
           // Top Header Section
           Column(
             children: [
-              const Text(
-                'Build Your Career with Zenvora',
-                style: TextStyle(
+              Text(
+                'Build Your Career with $appName',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textDark,

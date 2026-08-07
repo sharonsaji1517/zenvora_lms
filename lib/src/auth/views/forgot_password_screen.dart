@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../../widgets/dynamic_logo_widget.dart';
 import '../view_models/forgot_password_view_model.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -63,10 +64,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                             ],
                           ),
-                          child: Image.asset(
-                            'assets/icon/app_icon.png',
-                            height: 64,
+                          child: const DynamicLogoWidget(
                             width: 64,
+                            height: 64,
                             fit: BoxFit.contain,
                           ),
                         ),

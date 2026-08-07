@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../../viewmodels/app_settings_provider.dart';
+import '../../../../widgets/dynamic_logo_widget.dart';
 import '../view_models/home_view_model.dart';
 import 'widgets/left_navigation_drawer.dart';
 import 'widgets/promo_banner_slider.dart';
-import 'widgets/course_category_grid.dart';
-import 'widgets/rig_courses_list.dart';
-import 'widgets/featured_courses_list.dart';
+import 'widgets/top_categories_section.dart';
+import 'widgets/popular_courses_section.dart';
 import 'package:zenvoraapp/screens/profile_screen.dart';
-import '../../courses/views/wishlist_screen.dart';
+import 'package:zenvoraapp/screens/instructors_screen.dart';
+import 'package:zenvoraapp/screens/events_screen.dart';
 import '../../courses/views/my_courses_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<AppSettingsProvider>();
+    final appName = settings.appName.isNotEmpty ? settings.appName : 'Zenvora';
+
     return Container(
       decoration: const BoxDecoration(
         gradient: AppTheme.brandBackgroundGradient,
@@ -81,17 +87,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                child: Image.asset(
-                  'assets/icon/app_icon.png',
-                  height: 30,
+                child: const DynamicLogoWidget(
                   width: 30,
+                  height: 30,
                   fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Zenvora',
-                style: TextStyle(
+              Text(
+                appName,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -171,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           'Good Morning, ${_viewModel.firstName} 👋',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppTheme.textLight,
                             fontWeight: FontWeight.w500,
@@ -181,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const Text(
                           'Ready for your next shift?',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.textDark,
                             letterSpacing: -0.5,
@@ -199,33 +204,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                // Course Categories Grid
+                // Section 1: Top Categories (Horizontal Scroll)
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: CourseCategoryGrid(viewModel: _viewModel),
-                  ),
+                  child: TopCategoriesSection(viewModel: _viewModel),
                 ),
 
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                const SliverToBoxAdapter(child: SizedBox(height: 28)),
 
-                // Rig-Associated Courses (Horizontal Scroll)
+                // Section 2: Popular Courses (Horizontal Scroll)
                 SliverToBoxAdapter(
-                  child: RigCoursesList(courses: _viewModel.rigCourses),
-                ),
-
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-                // Featured Courses (Vertical List)
-                SliverToBoxAdapter(
-                  child: FeaturedCoursesList(
-                    viewModel: _viewModel,
-                    courses: _viewModel.featuredCourses,
-                  ),
+                  child: PopularCoursesSection(viewModel: _viewModel),
                 ),
 
                 // Bottom padding
-                const SliverToBoxAdapter(child: SizedBox(height: 40)),
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             );
           },
@@ -249,8 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               _buildNavItem(
                 context,
-                icon: Icons.school_outlined,
-                label: 'Courses',
+                icon: Icons.groups_outlined,
+                label: 'Instructors',
                 isSelected: false,
               ),
 
@@ -259,9 +251,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               _buildNavItem(
                 context,
-                icon: Icons.favorite_border_outlined,
-                activeIcon: Icons.favorite,
-                label: 'Wishlist',
+                icon: Icons.event_outlined,
+                label: 'Events',
                 isSelected: false,
               ),
               _buildNavItem(
@@ -274,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        // Floating Action Action Button styled like the mockup (resting inside BottomAppBar notch)
+        // Floating Action Button resting inside BottomAppBar notch opening Courses screen
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Container(
           height: 56,
@@ -292,12 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: FloatingActionButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Quick Action triggered! Add notes, search, or access resources.',
-                  ),
-                  backgroundColor: AppTheme.accentGreen,
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyCoursesScreen(),
                 ),
               );
             },
@@ -341,31 +330,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     return GestureDetector(
-      // onTap: () {
-      //   if (!isSelected) {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       SnackBar(content: Text('Navigating to $label screen...')),
-      //     );
-      //   }
-      // },
       onTap: () {
         if (label == 'Profile') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ProfileScreen()),
           );
-        } else if (label == 'Wishlist') {
+        } else if (label == 'Instructors') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const WishlistScreen()),
-          ).then((_) {
-            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-            _viewModel.loadHomeData();
-          });
-        } else if (label == 'Courses') {
+            MaterialPageRoute(builder: (context) => const InstructorsScreen()),
+          );
+        } else if (label == 'Events') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const MyCoursesScreen()),
+            MaterialPageRoute(builder: (context) => const EventsScreen()),
           );
         }
       },
@@ -377,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.2),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

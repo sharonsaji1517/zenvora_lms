@@ -9,15 +9,38 @@ class UserPreferencesService {
   static const String _keyToken = 'user_token';
   static const String _keyWishlist = 'user_wishlist';
   static const String _keyOnboardingCompleted = 'onboarding_completed';
+  static const String _keyHasSeenOnboarding = 'has_seen_onboarding';
+  static const String _keyIsLoggedIn = 'is_logged_in';
 
   Future<bool> isOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyOnboardingCompleted) ?? false;
+    return prefs.getBool(_keyHasSeenOnboarding) ?? prefs.getBool(_keyOnboardingCompleted) ?? false;
   }
 
   Future<void> setOnboardingCompleted(bool completed) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyOnboardingCompleted, completed);
+    await prefs.setBool(_keyHasSeenOnboarding, completed);
+  }
+
+  Future<bool> hasSeenOnboarding() async {
+    return isOnboardingCompleted();
+  }
+
+  Future<void> setHasSeenOnboarding(bool completed) async {
+    await setOnboardingCompleted(completed);
+  }
+
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool loggedInFlag = prefs.getBool(_keyIsLoggedIn) ?? false;
+    final token = prefs.getString(_keyToken);
+    return loggedInFlag || (token != null && token.isNotEmpty);
+  }
+
+  Future<void> setIsLoggedIn(bool loggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyIsLoggedIn, loggedIn);
   }
 
   Future<void> saveUserData(String fullName, String email, {String? token}) async {
@@ -27,11 +50,13 @@ class UserPreferencesService {
     if (token != null && token.isNotEmpty) {
       await prefs.setString(_keyToken, token);
     }
+    await prefs.setBool(_keyIsLoggedIn, true);
   }
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyToken, token);
+    await prefs.setBool(_keyIsLoggedIn, true);
   }
 
   Future<String?> getToken() async {
@@ -71,6 +96,7 @@ class UserPreferencesService {
     await prefs.remove(_keyEmail);
     await prefs.remove(_keyToken);
     await prefs.remove(_keyWishlist);
+    await prefs.setBool(_keyIsLoggedIn, false);
   }
 
   Future<bool> logoutUser(BuildContext context) async {

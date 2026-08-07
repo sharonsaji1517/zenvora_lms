@@ -6,7 +6,7 @@ import '../../src/classroom/models/classroom_model.dart';
 import 'user_preferences_service.dart';
 
 class ApiService {
-  static const String baseUrl = "https://zenvora.trynet.work/api";
+  static const String baseUrl = "https://zen.trynet.work/api";
 
   Future<http.Response> login(String email, String password) async {
     return await http.post(
@@ -22,9 +22,7 @@ class ApiService {
   Future<http.Response> getCategories() async {
     return await http.get(
       Uri.parse('$baseUrl/categories'),
-      headers: {
-        'Accept': 'application/json',
-      },
+      headers: {'Accept': 'application/json'},
     );
   }
 
@@ -32,9 +30,7 @@ class ApiService {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/courses'),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -53,9 +49,7 @@ class ApiService {
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/course/$id'),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -120,11 +114,7 @@ class ApiService {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({
-        'name': name,
-        'phone': phone,
-        'place': place,
-      }),
+      body: jsonEncode({'name': name, 'phone': phone, 'place': place}),
     );
   }
 

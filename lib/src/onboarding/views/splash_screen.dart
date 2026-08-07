@@ -4,6 +4,10 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/services/user_preferences_service.dart';
 import '../../../core/theme/app_theme.dart';
 
+import 'package:provider/provider.dart';
+import '../../../../viewmodels/app_settings_provider.dart';
+import '../../../../widgets/dynamic_logo_widget.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -53,14 +57,17 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _checkOnboardingAndNavigate() async {
     if (!mounted) return;
 
-    final isCompleted = await _preferencesService.isOnboardingCompleted();
+    final hasSeenOnboarding = await _preferencesService.hasSeenOnboarding();
+    final isLoggedIn = await _preferencesService.isLoggedIn();
 
     if (!mounted) return;
 
-    if (isCompleted) {
+    if (!hasSeenOnboarding) {
+      Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+    } else if (!isLoggedIn) {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
     }
   }
 
@@ -72,12 +79,15 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<AppSettingsProvider>();
+    final appName = settings.appName.isNotEmpty ? settings.appName : 'Zenvora';
+
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+          gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
           child: Center(
@@ -102,23 +112,17 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/icon/app_icon.png',
-                        height: 72,
+                      child: const DynamicLogoWidget(
                         width: 72,
+                        height: 72,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.school_rounded,
-                          size: 72,
-                          color: AppTheme.primaryBlue,
-                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     // App Title
-                    const Text(
-                      'Zenvora',
-                      style: TextStyle(
+                    Text(
+                      appName,
+                      style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: AppTheme.white,

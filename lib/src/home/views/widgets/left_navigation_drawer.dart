@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/services/user_preferences_service.dart';
+import '../../../../widgets/menu_list_tile.dart';
 
 class LeftNavigationDrawer extends StatefulWidget {
   final String activeRoute;
@@ -185,7 +186,20 @@ class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
     required String route,
     required bool isActive,
     bool isLogout = false,
+    String? badgeText,
+    int? badgeCount,
+    Widget? badgeWidget,
+    Color? badgeColor,
+    Color? badgeTextColor,
   }) {
+    final effectiveTrailing = AppMenuListTile.buildTrailingWithBadge(
+      badgeText: badgeText,
+      badgeCount: badgeCount,
+      badgeWidget: badgeWidget,
+      badgeColor: badgeColor,
+      badgeTextColor: badgeTextColor,
+    );
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
@@ -217,6 +231,7 @@ class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
                   fontSize: 15,
                 ),
               ),
+        trailing: effectiveTrailing,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

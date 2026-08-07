@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../core/theme/app_theme.dart';
+import '../viewmodels/app_settings_provider.dart';
+
+class DynamicLogoWidget extends StatelessWidget {
+  final double width;
+  final double height;
+  final BoxFit fit;
+  final String fallbackAssetPath;
+
+  const DynamicLogoWidget({
+    super.key,
+    this.width = 64,
+    this.height = 64,
+    this.fit = BoxFit.contain,
+    this.fallbackAssetPath = 'assets/icon/app_icon.png',
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<AppSettingsProvider>();
+    final logoUrl = settings.appLogo;
+
+    if (logoUrl != null && logoUrl.trim().isNotEmpty) {
+      return Image.network(
+        logoUrl.trim(),
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => _buildFallbackAsset(),
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return _buildFallbackAsset();
+        },
+      );
+    }
+
+    return _buildFallbackAsset();
+  }
+
+  Widget _buildFallbackAsset() {
+    return Image.asset(
+      fallbackAssetPath,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) => Icon(
+        Icons.school_rounded,
+        size: width,
+        color: AppTheme.primaryBlue,
+      ),
+    );
+  }
+}

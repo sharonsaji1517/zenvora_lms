@@ -24,6 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboardingAndNavigate() async {
+    await _preferencesService.setHasSeenOnboarding(true);
     await _preferencesService.setOnboardingCompleted(true);
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutes.login);
@@ -123,16 +124,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       const SizedBox(width: 16),
 
-                      // NEXT / GET STARTED Button (Filled Navy Blue)
+                      // NEXT / GET STARTED Button (Zenvora Gradient Theme)
                       Expanded(
-                        child: SizedBox(
+                        child: Container(
                           height: 52,
+                          decoration: BoxDecoration(
+                            gradient: AppTheme.primaryGradient,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryBlue.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
                           child: ElevatedButton(
                             onPressed: _onNextPressed,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryBlue,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
                               foregroundColor: AppTheme.white,
-                              elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),

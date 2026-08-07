@@ -29,8 +29,7 @@ class AppTheme {
   static const Color textLight = Color(0xFF94A3B8);
   static const Color borderLight = Color(0xFFE2E8F0);
   
-  // Gradients
-  // Deep Blue -> Ocean Blue -> Emerald Green (AppBar, Drawer)
+  // Static Gradients (Fallback)
   static const LinearGradient brandThreeColorGradient = LinearGradient(
     colors: [
       brandDeepBlue,
@@ -41,7 +40,6 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // Ocean Blue -> Emerald Green (FAB, active elements, buttons)
   static const LinearGradient brandBlueGreenGradient = LinearGradient(
     colors: [
       brandOceanBlue,
@@ -51,20 +49,17 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // Very light brand background gradient (Light Blue -> White with blue tint -> Light Green tint)
   static const LinearGradient brandBackgroundGradient = LinearGradient(
     colors: [
-      Color(0xFFEDF4FE), // Light Blue tint
-      Color(0xFFF6F9FF), // White with slight blue tint
-      Color(0xFFEEF9F0), // Light Green tint
+      Color(0xFFEDF4FE),
+      Color(0xFFF6F9FF),
+      Color(0xFFEEF9F0),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     stops: [0.0, 0.5, 1.0],
   );
 
-  // Legacy Gradients
-  // Blue -> Green gradient as the primary brand gradient
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [
       primaryBlue,
@@ -92,14 +87,65 @@ class AppTheme {
     end: Alignment.bottomCenter,
   );
 
-  static ThemeData get lightTheme {
+  // Dynamic Gradients
+  static LinearGradient getBrandThreeColorGradient({Color? primary, Color? secondary}) {
+    return LinearGradient(
+      colors: [
+        primary ?? brandDeepBlue,
+        secondary ?? brandOceanBlue,
+        brandEmeraldGreen,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+  }
+
+  static LinearGradient getBrandBlueGreenGradient({Color? secondary}) {
+    return LinearGradient(
+      colors: [
+        secondary ?? brandOceanBlue,
+        brandEmeraldGreen,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+  }
+
+  static LinearGradient getPrimaryGradient({Color? primary}) {
+    return LinearGradient(
+      colors: [
+        primary ?? primaryBlue,
+        accentGreen,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+  }
+
+  static LinearGradient getBackgroundGradient({Color? primary, Color? secondary}) {
+    return LinearGradient(
+      colors: [
+        primary ?? primaryBlue,
+        secondary ?? secondaryBlue,
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+  }
+
+  /// Builds a [ThemeData] instance dynamically based on [primary] and [secondary] brand colors.
+  /// Automatically falls back to default Zenvora branding if null.
+  static ThemeData getTheme({Color? primary, Color? secondary}) {
+    final Color effectivePrimary = primary ?? primaryBlue;
+    final Color effectiveSecondary = secondary ?? secondaryBlue;
+
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: backgroundLight,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryBlue,
-        primary: primaryBlue,
-        secondary: secondaryBlue,
+        seedColor: effectivePrimary,
+        primary: effectivePrimary,
+        secondary: effectiveSecondary,
         tertiary: accentGreen,
         surface: backgroundLight,
       ),
@@ -156,7 +202,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryBlue, width: 1.5),
+          borderSide: BorderSide(color: effectivePrimary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -189,4 +235,6 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData get lightTheme => getTheme();
 }

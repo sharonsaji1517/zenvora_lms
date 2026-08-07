@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_drawer.dart';
+import '../src/home/views/widgets/left_navigation_drawer.dart';
+import '../widgets/menu_list_tile.dart';
 import '../core/services/user_preferences_service.dart';
 import '../core/theme/app_theme.dart';
 import '../core/routes/app_routes.dart';
@@ -35,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
-      drawer: const CustomDrawer(activeItem: DrawerItem.profile),
+      drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.profile),
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(),
@@ -411,7 +412,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    String? badgeText,
+    int? badgeCount,
+    Widget? badgeWidget,
+    Color? badgeColor,
+    Color? badgeTextColor,
   }) {
+    final trailingArrow = Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 16,
+      color: AppTheme.borderLight.withOpacity(0.8),
+    );
+
+    final effectiveTrailing = AppMenuListTile.buildTrailingWithBadge(
+      trailing: trailingArrow,
+      badgeText: badgeText,
+      badgeCount: badgeCount,
+      badgeWidget: badgeWidget,
+      badgeColor: badgeColor,
+      badgeTextColor: badgeTextColor,
+    );
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -453,17 +474,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: AppTheme.borderLight.withOpacity(0.8),
-              ),
+              if (effectiveTrailing != null) effectiveTrailing,
             ],
           ),
         ),
       ),
     );
   }
+
 
   Widget _buildPersonalInfoCard() {
     return Container(

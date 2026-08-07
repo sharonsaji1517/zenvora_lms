@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_drawer.dart';
+import '../src/home/views/widgets/left_navigation_drawer.dart';
+import '../core/routes/app_routes.dart';
 import '../core/services/user_preferences_service.dart';
 
 class CommunityScreen extends StatefulWidget {
@@ -103,7 +104,7 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
           ],
         ),
       ),
-      drawer: const CustomDrawer(activeItem: DrawerItem.community),
+      drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.home),
       body: TabBarView(
         controller: _tabController,
         children: [

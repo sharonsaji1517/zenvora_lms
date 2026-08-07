@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_drawer.dart';
+import '../src/home/views/widgets/left_navigation_drawer.dart';
+import '../core/routes/app_routes.dart';
 
 class MyCoursesScreen extends StatelessWidget {
   const MyCoursesScreen({super.key});
@@ -47,7 +48,7 @@ class MyCoursesScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('My Enrolled Courses'),
       ),
-      drawer: const CustomDrawer(activeItem: DrawerItem.myCourses),
+      drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.myCourses),
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemCount: courses.length,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../../viewmodels/app_settings_provider.dart';
+import '../../../../widgets/dynamic_logo_widget.dart';
 import '../view_models/login_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -32,6 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final settings = context.watch<AppSettingsProvider>();
+    final appName = settings.appName.isNotEmpty ? settings.appName : 'Zenvora LMS';
 
     return Scaffold(
       body: ListenableBuilder(
@@ -65,17 +70,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          child: Image.asset(
-                            'assets/icon/app_icon.png',
-                            height: 64,
+                          child: const DynamicLogoWidget(
                             width: 64,
+                            height: 64,
                             fit: BoxFit.contain,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Zenvora LMS',
-                          style: TextStyle(
+                        Text(
+                          appName,
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_drawer.dart';
+import '../src/home/views/widgets/left_navigation_drawer.dart';
+import '../core/routes/app_routes.dart';
+import '../widgets/menu_list_tile.dart';
 import 'terms_and_conditions_screen.dart';
 import 'help_center_screen.dart';
 
@@ -22,7 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      drawer: const CustomDrawer(activeItem: DrawerItem.settings),
+      drawer: const LeftNavigationDrawer(activeRoute: AppRoutes.settings),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -107,17 +109,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: const Icon(Icons.info_outline, color: Colors.grey),
-                        title: const Text(
-                          'Privacy Policy',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
-                        ),
-                        subtitle: const Text(
-                          'Read terms, user agreements and data privacy policies',
-                          style: TextStyle(fontSize: 11.5),
-                        ),
-                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                      _buildSettingsTile(
+                        icon: Icons.info_outline,
+                        title: 'Privacy Policy',
+                        subtitle: 'Read terms, user agreements and data privacy policies',
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                         ),
@@ -131,17 +126,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         },
                       ),
                       const Divider(height: 1, indent: 56),
-                      ListTile(
-                        leading: const Icon(Icons.description_outlined, color: Colors.grey),
-                        title: const Text(
-                          'Terms & Conditions',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
-                        ),
-                        subtitle: const Text(
-                          'Read our terms and conditions.',
-                          style: TextStyle(fontSize: 11.5),
-                        ),
-                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                      _buildSettingsTile(
+                        icon: Icons.description_outlined,
+                        title: 'Terms & Conditions',
+                        subtitle: 'Read our terms and conditions.',
                         onTap: () {
                           Navigator.push(
                             context,
@@ -150,17 +138,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         },
                       ),
                       const Divider(height: 1, indent: 56),
-                      ListTile(
-                        leading: const Icon(Icons.support_agent_outlined, color: Colors.grey),
-                        title: const Text(
-                          'Help Center',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
-                        ),
-                        subtitle: const Text(
-                          'Get support and contact us.',
-                          style: TextStyle(fontSize: 11.5),
-                        ),
-                        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+                      _buildSettingsTile(
+                        icon: Icons.support_agent_outlined,
+                        title: 'Help Center',
+                        subtitle: 'Get support and contact us.',
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
                         ),
@@ -171,6 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           );
                         },
                       ),
+
                     ],
                   ),
                 ),
@@ -206,4 +188,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    String? badgeText,
+    int? badgeCount,
+    Widget? badgeWidget,
+    Color? badgeColor,
+    Color? badgeTextColor,
+    ShapeBorder? shape,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.grey),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(fontSize: 11.5),
+      ),
+      trailing: AppMenuListTile.buildTrailingWithBadge(
+        trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.grey),
+        badgeText: badgeText,
+        badgeCount: badgeCount,
+        badgeWidget: badgeWidget,
+        badgeColor: badgeColor,
+        badgeTextColor: badgeTextColor,
+      ),
+      shape: shape,
+      onTap: onTap,
+    );
+  }
 }
+

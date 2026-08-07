@@ -65,16 +65,18 @@ class CourseCategoryGrid extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final visibleCount = viewModel.categories.length > 8 ? 8 : viewModel.categories.length;
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.05,
+        crossAxisCount: 4,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 0.85,
       ),
-      itemCount: viewModel.categories.length,
+      itemCount: visibleCount,
       itemBuilder: (context, index) {
         final category = viewModel.categories[index];
         final categoryIdStr = category.id.toString();
@@ -88,7 +90,7 @@ class CourseCategoryGrid extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               color: isSelected ? AppTheme.brandDeepBlue : Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isSelected ? Colors.transparent : categoryColor.withOpacity(0.25),
                 width: 1.2,
@@ -108,7 +110,7 @@ class CourseCategoryGrid extends StatelessWidget {
               children: [
                 // Circular icon frame
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected 
                         ? Colors.white.withOpacity(0.2) 
@@ -118,10 +120,10 @@ class CourseCategoryGrid extends StatelessWidget {
                   child: Icon(
                     iconData,
                     color: isSelected ? Colors.white : categoryColor,
-                    size: 24,
+                    size: 22,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(
@@ -130,10 +132,10 @@ class CourseCategoryGrid extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                       color: isSelected ? Colors.white : AppTheme.textDark,
-                      height: 1.2,
+                      height: 1.15,
                     ),
                   ),
                 ),
