@@ -69,7 +69,7 @@ class OnboardingPageTwo extends StatelessWidget {
                             gradient: RadialGradient(
                               colors: [
                                 AppTheme.goldenAccent.withOpacity(0.1),
-                                AppTheme.primaryBlue.withOpacity(0.03),
+                                Theme.of(context).colorScheme.primary.withOpacity(0.03),
                                 Colors.transparent,
                               ],
                             ),
@@ -79,7 +79,7 @@ class OnboardingPageTwo extends StatelessWidget {
                         // Custom Career Chart & Rays Painter
                         CustomPaint(
                           size: Size(finalSize, finalSize),
-                          painter: _CareerIllustrationPainter(),
+                          painter: _CareerIllustrationPainter(primaryColor: Theme.of(context).colorScheme.primary),
                         ),
 
                         // Main Certificate Card Overlay
@@ -92,7 +92,7 @@ class OnboardingPageTwo extends StatelessWidget {
                               borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.14),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.14),
                                   blurRadius: 24,
                                   offset: const Offset(0, 10),
                                 ),
@@ -111,25 +111,82 @@ class OnboardingPageTwo extends StatelessWidget {
                                     Row(
                                       children: [
                                         const Icon(
-                                          Icons.workspace_premium_rounded,
+                                          Icons.verified_rounded,
                                           color: AppTheme.goldenAccent,
-                                          size: 26,
+                                          size: 18,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: const [
-                                            Text(
-                                              'ZENVORA CERTIFIED',
+                                        const SizedBox(width: 6),
+                                        const Text(
+                                          'Professional Certificate',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.textDark,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.goldenAccent.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Text(
+                                        'VALID',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.goldenAccent,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.backgroundLight,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppTheme.borderLight,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.school_rounded,
+                                          color: Theme.of(context).colorScheme.primary,
+                                          size: 18,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Advanced Rig Safety',
                                               style: TextStyle(
-                                                fontSize: 11,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.bold,
-                                                color: AppTheme.primaryBlue,
-                                                letterSpacing: 0.8,
+                                                color: AppTheme.textDark,
                                               ),
                                             ),
+                                            const SizedBox(height: 2),
                                             Text(
-                                              'Oil & Gas Professional',
+                                              'Issued by Zenvora Institute',
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 color: AppTheme.textMedium,
@@ -137,29 +194,8 @@ class OnboardingPageTwo extends StatelessWidget {
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(
-                                        color: AppTheme.brandEmeraldGreen,
-                                        shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Container(
-                                  height: 3,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    gradient: AppTheme.primaryGradient,
-                                    borderRadius: BorderRadius.circular(2),
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -169,13 +205,13 @@ class OnboardingPageTwo extends StatelessWidget {
                                     Row(
                                       children: const [
                                         Icon(
-                                          Icons.verified_rounded,
-                                          color: AppTheme.secondaryBlue,
+                                          Icons.star_rounded,
+                                          color: AppTheme.goldenAccent,
                                           size: 16,
                                         ),
                                         SizedBox(width: 4),
                                         Text(
-                                          'Industry Verified',
+                                          '4.9 (1.2k Ratings)',
                                           style: TextStyle(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w600,
@@ -190,15 +226,15 @@ class OnboardingPageTwo extends StatelessWidget {
                                         vertical: 3,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryBlue.withOpacity(0.08),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Text(
+                                      child: Text(
                                         'Level 5',
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: AppTheme.primaryBlue,
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -216,11 +252,11 @@ class OnboardingPageTwo extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryBlue,
+                              color: Theme.of(context).colorScheme.primary,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -273,6 +309,10 @@ class OnboardingPageTwo extends StatelessWidget {
 }
 
 class _CareerIllustrationPainter extends CustomPainter {
+  final Color primaryColor;
+
+  _CareerIllustrationPainter({required this.primaryColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final double width = size.width;
@@ -282,7 +322,7 @@ class _CareerIllustrationPainter extends CustomPainter {
     final Paint linePaint = Paint()
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
-      ..color = AppTheme.primaryBlue.withOpacity(0.2);
+      ..color = primaryColor.withOpacity(0.2);
 
     final Path path = Path();
     path.moveTo(width * 0.15, height * 0.75);

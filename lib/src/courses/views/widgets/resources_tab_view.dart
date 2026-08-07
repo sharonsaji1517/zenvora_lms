@@ -58,7 +58,7 @@ class ResourcesTabView extends StatelessWidget {
               style: TextStyle(fontSize: 11, color: AppTheme.textLight),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.download_for_offline_outlined, color: AppTheme.primaryBlue),
+              icon: Icon(Icons.download_for_offline_outlined, color: Theme.of(context).colorScheme.primary),
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

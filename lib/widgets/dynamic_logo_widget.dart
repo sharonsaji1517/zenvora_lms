@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../core/theme/app_theme.dart';
 import '../viewmodels/app_settings_provider.dart';
 
 class DynamicLogoWidget extends StatelessWidget {
@@ -28,18 +27,18 @@ class DynamicLogoWidget extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => _buildFallbackAsset(),
+        errorBuilder: (context, error, stackTrace) => _buildFallbackAsset(context),
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return _buildFallbackAsset();
+          return _buildFallbackAsset(context);
         },
       );
     }
 
-    return _buildFallbackAsset();
+    return _buildFallbackAsset(context);
   }
 
-  Widget _buildFallbackAsset() {
+  Widget _buildFallbackAsset(BuildContext context) {
     return Image.asset(
       fallbackAssetPath,
       width: width,
@@ -48,7 +47,7 @@ class DynamicLogoWidget extends StatelessWidget {
       errorBuilder: (context, error, stackTrace) => Icon(
         Icons.school_rounded,
         size: width,
-        color: AppTheme.primaryBlue,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }

@@ -49,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   width: double.infinity,
                   height: size.height * 0.40,
-                  decoration: const BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.primaryGradientOf(context),
                   ),
                   child: SafeArea(
                     child: Column(
@@ -252,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: BoxDecoration(
                             gradient: _viewModel.isLoading
                                 ? null
-                                : AppTheme.primaryGradient,
+                                : AppTheme.primaryGradientOf(context),
                             color: _viewModel.isLoading
                                 ? AppTheme.textLight
                                 : null,
@@ -260,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             boxShadow: [
                               if (!_viewModel.isLoading)
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -304,10 +304,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               onTap: () {
                                 Navigator.pushNamed(context, AppRoutes.signUp);
                               },
-                              child: const Text(
+                              child: Text(
                                 'Sign Up',
                                 style: TextStyle(
-                                  color: AppTheme.primaryBlue,
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),

@@ -66,9 +66,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         listenable: _viewModel,
         builder: (context, child) {
           if (_viewModel.isLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                color: AppTheme.primaryBlue,
+                color: Theme.of(context).colorScheme.primary,
               ),
             );
           }
@@ -106,7 +106,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryBlue,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 12,
@@ -125,13 +125,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           final classroom = _viewModel.classroom;
           final course = classroom?.course;
 
-          return SafeArea(
+          return RefreshIndicator(
+            onRefresh: () => _viewModel.fetchClassroom(_currentCourseId),
+            color: Theme.of(context).colorScheme.primary,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top Welcome Card
+                  // Welcome Banner with Brand Gradient
                   TweenAnimationBuilder<double>(
                     duration: const Duration(milliseconds: 400),
                     tween: Tween<double>(begin: 0.0, end: 1.0),
@@ -145,7 +148,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24.0),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.brandThreeColorGradient,
+                        gradient: AppTheme.brandThreeColorGradientOf(context),
                         borderRadius: BorderRadius.circular(24.0),
                         boxShadow: [
                           BoxShadow(
@@ -199,8 +202,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             title: 'Courses',
                             value: '${_viewModel.coursesCount}',
                             icon: Icons.menu_book_rounded,
-                            iconColor: AppTheme.primaryBlue,
-                            bgColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                            iconColor: Theme.of(context).colorScheme.primary,
+                            bgColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -209,8 +212,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             title: 'Lessons',
                             value: '${_viewModel.lessonsCount}',
                             icon: Icons.play_circle_outline_rounded,
-                            iconColor: AppTheme.brandOceanBlue,
-                            bgColor: AppTheme.brandOceanBlue.withValues(alpha: 0.1),
+                            iconColor: Theme.of(context).colorScheme.secondary,
+                            bgColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -236,12 +239,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
                   // Videos Section
                   if (classroom != null && classroom.videos.isNotEmpty) ...[
-                    _buildSectionHeader('Videos', Icons.play_circle_fill_rounded, AppTheme.primaryBlue),
+                    _buildSectionHeader('Videos', Icons.play_circle_fill_rounded, Theme.of(context).colorScheme.primary),
                     const SizedBox(height: 12),
                     ...classroom.videos.map((video) => _buildResourceTile(
                           title: video.title,
                           icon: Icons.play_arrow_rounded,
-                          iconColor: AppTheme.primaryBlue,
+                          iconColor: Theme.of(context).colorScheme.primary,
                           subtitle: 'Video Lesson',
                         )),
                     const SizedBox(height: 24),
@@ -289,7 +292,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   const SizedBox(height: 24),
 
                   // Private Videos Section
-                  _buildSectionHeader('Private Videos', Icons.lock_clock_rounded, AppTheme.brandOceanBlue),
+                  _buildSectionHeader('Private Videos', Icons.lock_clock_rounded, Theme.of(context).colorScheme.secondary),
                   const SizedBox(height: 12),
                   if (classroom == null || classroom.privateVideos.isEmpty)
                     _buildEmptyResourceCard('No private videos available', Icons.lock_outline_rounded)
@@ -297,7 +300,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     ...classroom.privateVideos.map((pv) => _buildResourceTile(
                           title: pv.title,
                           icon: Icons.lock_clock_rounded,
-                          iconColor: AppTheme.brandOceanBlue,
+                          iconColor: Theme.of(context).colorScheme.secondary,
                           subtitle: 'Private Video',
                         )),
                   const SizedBox(height: 24),
@@ -310,11 +313,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         child: Container(
                           height: 50,
                           decoration: BoxDecoration(
-                            gradient: AppTheme.brandBlueGreenGradient,
+                            gradient: AppTheme.brandBlueGreenGradientOf(context),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.brandOceanBlue.withValues(alpha: 0.25),
+                                color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.25),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),

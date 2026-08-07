@@ -96,10 +96,10 @@ class ReusableCourseCard extends StatelessWidget {
                       title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryBlue,
+                        color: Theme.of(context).colorScheme.primary,
                         height: 1.2,
                       ),
                     ),

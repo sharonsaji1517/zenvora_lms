@@ -63,7 +63,7 @@ class OnboardingPageOne extends StatelessWidget {
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                AppTheme.primaryBlue.withOpacity(0.08),
+                                Theme.of(context).colorScheme.primary.withOpacity(0.08),
                                 AppTheme.brandOceanBlue.withOpacity(0.02),
                                 Colors.transparent,
                               ],
@@ -74,7 +74,7 @@ class OnboardingPageOne extends StatelessWidget {
                         // Custom Oil & Gas Learning Painter Canvas
                         CustomPaint(
                           size: Size(finalSize, finalSize),
-                          painter: _OilAndGasIllustrationPainter(),
+                          painter: _OilAndGasIllustrationPainter(primaryColor: Theme.of(context).colorScheme.primary),
                         ),
 
                         // Interactive Laptop Screen Card Overlay
@@ -88,7 +88,7 @@ class OnboardingPageOne extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.12),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
                                   blurRadius: 20,
                                   offset: const Offset(0, 8),
                                 ),
@@ -106,12 +106,12 @@ class OnboardingPageOne extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.all(6),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryBlue.withOpacity(0.1),
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.play_circle_fill_rounded,
-                                        color: AppTheme.primaryBlue,
+                                        color: Theme.of(context).colorScheme.primary,
                                         size: 20,
                                       ),
                                     ),
@@ -167,8 +167,8 @@ class OnboardingPageOne extends StatelessWidget {
                                   child: LinearProgressIndicator(
                                     value: 0.65,
                                     backgroundColor: AppTheme.borderLight,
-                                    valueColor: const AlwaysStoppedAnimation<Color>(
-                                      AppTheme.primaryBlue,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).colorScheme.primary,
                                     ),
                                     minHeight: 4,
                                   ),
@@ -210,11 +210,11 @@ class OnboardingPageOne extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryBlue,
+                              color: Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -242,6 +242,10 @@ class OnboardingPageOne extends StatelessWidget {
 }
 
 class _OilAndGasIllustrationPainter extends CustomPainter {
+  final Color primaryColor;
+
+  _OilAndGasIllustrationPainter({required this.primaryColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final double width = size.width;
@@ -251,7 +255,7 @@ class _OilAndGasIllustrationPainter extends CustomPainter {
     final Paint linePaint = Paint()
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
-      ..color = AppTheme.primaryBlue.withOpacity(0.15);
+      ..color = primaryColor.withOpacity(0.15);
 
     final Path rigPath = Path();
     final double cx = width * 0.5;

@@ -39,9 +39,9 @@ class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
     return Drawer(
       backgroundColor: Colors.transparent,
       child: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.brandThreeColorGradient,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          gradient: AppTheme.brandThreeColorGradientOf(context),
+          borderRadius: const BorderRadius.only(
             topRight: Radius.circular(24),
             bottomRight: Radius.circular(24),
           ),

@@ -37,16 +37,16 @@ class HomeViewModel extends ChangeNotifier {
   List<CourseModel> get rigCourses => _courses;
   List<CourseModel> get featuredCourses => _courses;
 
-  Future<void> loadCategories() async {
+  Future<void> loadTopCategories() async {
     try {
       final apiService = ApiService();
-      final response = await apiService.getCategories();
+      final response = await apiService.getTopCategories();
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true && data['categories'] != null) {
-          final List list = data['categories'];
-          _categories = list.map((item) => CategoryModel.fromJson(item)).toList();
+        final List? rawList = data['data'] ?? data['categories'];
+        if ((data['status'] == true || data['success'] == true) && rawList != null) {
+          _categories = rawList.map((item) => CategoryModel.fromJson(item)).toList();
         } else {
           _categories = [];
         }
@@ -57,6 +57,10 @@ class HomeViewModel extends ChangeNotifier {
       _categories = [];
     }
     notifyListeners();
+  }
+
+  Future<void> loadCategories() async {
+    await loadTopCategories();
   }
 
   Future<void> loadCourses() async {
@@ -79,7 +83,7 @@ class HomeViewModel extends ChangeNotifier {
       _fullName = await prefsService.getFullName();
       final wishlist = await prefsService.getWishlist();
 
-      await loadCategories();
+      await loadTopCategories();
       await loadCourses();
 
       // Update favorite status from wishlist

@@ -133,6 +133,44 @@ class AppTheme {
     );
   }
 
+  // Context-aware dynamic gradient getters using Theme.of(context)
+  static LinearGradient primaryGradientOf(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    return getPrimaryGradient(primary: primary);
+  }
+
+  static LinearGradient backgroundGradientOf(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
+    return getBackgroundGradient(primary: primary, secondary: secondary);
+  }
+
+  static LinearGradient brandThreeColorGradientOf(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
+    return getBrandThreeColorGradient(primary: primary, secondary: secondary);
+  }
+
+  static LinearGradient brandBlueGreenGradientOf(BuildContext context) {
+    final secondary = Theme.of(context).colorScheme.secondary;
+    return getBrandBlueGreenGradient(secondary: secondary);
+  }
+
+  static LinearGradient brandBackgroundGradientOf(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
+    return LinearGradient(
+      colors: [
+        primary.withOpacity(0.08),
+        Color.alphaBlend(secondary.withOpacity(0.04), Colors.white),
+        Color(0xFFEEF9F0),
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      stops: const [0.0, 0.5, 1.0],
+    );
+  }
+
   /// Builds a [ThemeData] instance dynamically based on [primary] and [secondary] brand colors.
   /// Automatically falls back to default Zenvora branding if null.
   static ThemeData getTheme({Color? primary, Color? secondary}) {

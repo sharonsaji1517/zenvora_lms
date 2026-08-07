@@ -10,17 +10,17 @@ class CourseCategoryGrid extends StatelessWidget {
     required this.viewModel,
   });
 
-  Color _getCategoryColor(String id) {
+  Color _getCategoryColor(BuildContext context, String id) {
     switch (id) {
       case '1':
       case 'rig':
-        return AppTheme.brandDeepBlue;
+        return Theme.of(context).colorScheme.primary;
       case '2':
       case 'safety':
         return AppTheme.brandEmeraldGreen;
       case '3':
       case 'technical':
-        return AppTheme.brandOceanBlue;
+        return Theme.of(context).colorScheme.secondary;
       case '4':
       case 'hse':
         return AppTheme.brandEmeraldGreen;
@@ -29,9 +29,9 @@ class CourseCategoryGrid extends StatelessWidget {
         return AppTheme.brandGoldenYellow;
       case '6':
       case 'management':
-        return AppTheme.brandOceanBlue;
+        return Theme.of(context).colorScheme.secondary;
       default:
-        return AppTheme.brandDeepBlue;
+        return Theme.of(context).colorScheme.primary;
     }
   }
 
@@ -81,7 +81,7 @@ class CourseCategoryGrid extends StatelessWidget {
         final category = viewModel.categories[index];
         final categoryIdStr = category.id.toString();
         final isSelected = viewModel.selectedCategoryId == categoryIdStr;
-        final categoryColor = _getCategoryColor(categoryIdStr);
+        final categoryColor = _getCategoryColor(context, categoryIdStr);
         final iconData = _getIconData(category.icon, category.name);
 
         return GestureDetector(
@@ -89,7 +89,7 @@ class CourseCategoryGrid extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: isSelected ? AppTheme.brandDeepBlue : Colors.white,
+              color: isSelected ? Theme.of(context).colorScheme.primary : Colors.white,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isSelected ? Colors.transparent : categoryColor.withOpacity(0.25),
@@ -98,7 +98,7 @@ class CourseCategoryGrid extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: isSelected
-                      ? AppTheme.brandDeepBlue.withOpacity(0.25)
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.25)
                       : Colors.black.withOpacity(0.04),
                   blurRadius: isSelected ? 8 : 6,
                   offset: isSelected ? const Offset(0, 3) : const Offset(0, 2),

@@ -64,8 +64,8 @@ class _OverviewTabViewState extends State<OverviewTabView> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
                 _isDescriptionExpanded ? 'Read Less' : 'Read More',
-                style: const TextStyle(
-                  color: AppTheme.primaryBlue,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),

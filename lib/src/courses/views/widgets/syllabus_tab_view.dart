@@ -99,12 +99,12 @@ class SyllabusTabView extends StatelessWidget {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryBlue.withValues(alpha: 0.08),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           itemIcon,
-                          color: AppTheme.primaryBlue,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 20,
                         ),
                       ),

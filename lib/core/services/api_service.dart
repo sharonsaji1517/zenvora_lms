@@ -26,6 +26,42 @@ class ApiService {
     );
   }
 
+  Future<http.Response> getTopCategories() async {
+    return await http.get(
+      Uri.parse('$baseUrl/top-categories'),
+      headers: {'Accept': 'application/json'},
+    );
+  }
+
+  Future<http.Response> getCategoryCourses(String slug) async {
+    return await http.get(
+      Uri.parse('$baseUrl/category/$slug/courses'),
+      headers: {'Accept': 'application/json'},
+    );
+  }
+
+  Future<List<CourseModel>> fetchCategoryCourses(String slug) async {
+    try {
+      final response = await getCategoryCourses(slug);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List? rawList = (data['data'] is List)
+            ? data['data']
+            : (data['courses'] is List
+                ? data['courses']
+                : (data['category']?['courses'] is List
+                    ? data['category']['courses']
+                    : null));
+        if (rawList != null) {
+          return rawList.map((json) => CourseModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<List<CourseModel>> getCourses() async {
     try {
       final response = await http.get(

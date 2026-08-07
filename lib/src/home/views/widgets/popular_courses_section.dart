@@ -172,7 +172,7 @@ class PopularCoursesSection extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    gradient: AppTheme.brandBlueGreenGradient,
+                                    gradient: AppTheme.brandBlueGreenGradientOf(context),
                                     borderRadius: BorderRadius.circular(6),
                                     boxShadow: [
                                       BoxShadow(

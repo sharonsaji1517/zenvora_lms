@@ -113,7 +113,7 @@ class FeaturedCoursesList extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppTheme.brandDeepBlue.withOpacity(0.85),
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -176,10 +176,10 @@ class FeaturedCoursesList extends StatelessWidget {
                           course.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.brandDeepBlue,
+                            color: Theme.of(context).colorScheme.primary,
                             height: 1.25,
                           ),
                         ),
@@ -220,7 +220,7 @@ class FeaturedCoursesList extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                gradient: AppTheme.brandBlueGreenGradient,
+                                gradient: AppTheme.brandBlueGreenGradientOf(context),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(

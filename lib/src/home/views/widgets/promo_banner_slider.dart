@@ -267,7 +267,7 @@ class _PromoBannerSliderState extends State<PromoBannerSlider> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: widget.viewModel.currentBannerIndex == index
-                      ? AppTheme.primaryBlue
+                      ? Theme.of(context).colorScheme.primary
                       : AppTheme.borderLight,
                 ),
               ),

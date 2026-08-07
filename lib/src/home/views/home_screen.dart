@@ -45,8 +45,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final appName = settings.appName.isNotEmpty ? settings.appName : 'Zenvora';
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: AppTheme.brandBackgroundGradient,
+      decoration: BoxDecoration(
+        gradient: AppTheme.brandBackgroundGradientOf(context),
       ),
       child: Scaffold(
         key: _scaffoldKey,
@@ -60,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: false,
           titleSpacing: 0,
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.brandThreeColorGradient,
+            decoration: BoxDecoration(
+              gradient: AppTheme.brandThreeColorGradientOf(context),
             ),
           ),
           leading: IconButton(
@@ -270,10 +270,10 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton: Container(
           height: 56,
           width: 56,
-          decoration: const BoxDecoration(
-            gradient: AppTheme.brandBlueGreenGradient,
+          decoration: BoxDecoration(
+            gradient: AppTheme.brandBlueGreenGradientOf(context),
             shape: BoxShape.circle,
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 8,
@@ -308,13 +308,15 @@ class _HomeScreenState extends State<HomeScreen> {
     required String label,
     required bool isSelected,
   }) {
+    final inactiveColor = Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6);
+
     Widget content = Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           isSelected ? (activeIcon ?? icon) : icon,
-          color: isSelected ? Colors.white : AppTheme.textLight,
+          color: isSelected ? Colors.white : inactiveColor,
           size: 22,
         ),
         const SizedBox(height: 2),
@@ -323,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(
             fontSize: 10,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? Colors.white : AppTheme.textLight,
+            color: isSelected ? Colors.white : inactiveColor,
           ),
         ),
       ],
@@ -352,11 +354,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
-                gradient: AppTheme.brandBlueGreenGradient,
+                gradient: AppTheme.brandBlueGreenGradientOf(context),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withValues(alpha: 0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

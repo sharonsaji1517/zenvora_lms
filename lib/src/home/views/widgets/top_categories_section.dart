@@ -9,17 +9,17 @@ class TopCategoriesSection extends StatelessWidget {
 
   const TopCategoriesSection({super.key, required this.viewModel});
 
-  Color _getCategoryColor(String id) {
+  Color _getCategoryColor(BuildContext context, String id) {
     switch (id) {
       case '1':
       case 'rig':
-        return AppTheme.brandDeepBlue;
+        return Theme.of(context).colorScheme.primary;
       case '2':
       case 'safety':
         return AppTheme.brandEmeraldGreen;
       case '3':
       case 'technical':
-        return AppTheme.brandOceanBlue;
+        return Theme.of(context).colorScheme.secondary;
       case '4':
       case 'hse':
         return AppTheme.brandEmeraldGreen;
@@ -28,9 +28,9 @@ class TopCategoriesSection extends StatelessWidget {
         return AppTheme.brandGoldenYellow;
       case '6':
       case 'management':
-        return AppTheme.brandOceanBlue;
+        return Theme.of(context).colorScheme.secondary;
       default:
-        return AppTheme.brandDeepBlue;
+        return Theme.of(context).colorScheme.primary;
     }
   }
 
@@ -131,7 +131,7 @@ class TopCategoriesSection extends StatelessWidget {
               final category = categories[index];
               final categoryIdStr = category.id.toString();
               final isSelected = viewModel.selectedCategoryId == categoryIdStr;
-              final Color categoryColor = _getCategoryColor(categoryIdStr);
+              final Color categoryColor = _getCategoryColor(context, categoryIdStr);
               final IconData iconData = _getIconData(
                 category.icon,
                 category.name,
@@ -150,6 +150,7 @@ class TopCategoriesSection extends StatelessWidget {
                           builder: (context) => CategoryCoursesScreen(
                             categoryId: category.id,
                             categoryName: category.name,
+                            categorySlug: category.slug,
                           ),
                         ),
                       ).then((_) {
@@ -167,7 +168,7 @@ class TopCategoriesSection extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.brandDeepBlue
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
@@ -179,7 +180,7 @@ class TopCategoriesSection extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: isSelected
-                                ? AppTheme.brandDeepBlue.withOpacity(0.25)
+                                ? Theme.of(context).colorScheme.primary.withOpacity(0.25)
                                 : Colors.black.withOpacity(0.04),
                             blurRadius: isSelected ? 10 : 8,
                             offset: isSelected

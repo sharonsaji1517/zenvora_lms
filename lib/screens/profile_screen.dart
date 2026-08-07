@@ -81,12 +81,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       expandedHeight: 280.0,
       pinned: true,
       elevation: 0,
-      backgroundColor: AppTheme.primaryBlue,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       iconTheme: const IconThemeData(color: Colors.white),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.brandThreeColorGradient,
+          decoration: BoxDecoration(
+            gradient: AppTheme.brandThreeColorGradientOf(context),
           ),
           child: SafeArea(
             child: Column(

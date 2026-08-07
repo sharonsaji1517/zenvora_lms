@@ -106,7 +106,7 @@ class RigCoursesList extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: AppTheme.brandDeepBlue.withOpacity(0.85),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -136,10 +136,10 @@ class RigCoursesList extends StatelessWidget {
                             course.name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.brandDeepBlue,
+                              color: Theme.of(context).colorScheme.primary,
                               height: 1.2,
                             ),
                           ),

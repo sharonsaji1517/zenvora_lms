@@ -82,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         width: _currentPage == index ? 24 : 8,
                         decoration: BoxDecoration(
                           color: _currentPage == index
-                              ? AppTheme.primaryBlue
+                              ? Theme.of(context).colorScheme.primary
                               : AppTheme.borderLight,
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -102,20 +102,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             onPressed: _completeOnboardingAndNavigate,
                             style: OutlinedButton.styleFrom(
                               backgroundColor: AppTheme.white,
-                              side: const BorderSide(
-                                color: AppTheme.primaryBlue,
+                              side: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
                                 width: 1.5,
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'SKIP',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.primaryBlue,
+                                color: Theme.of(context).colorScheme.primary,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -129,11 +129,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Container(
                           height: 52,
                           decoration: BoxDecoration(
-                            gradient: AppTheme.primaryGradient,
+                            gradient: AppTheme.primaryGradientOf(context),
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primaryBlue.withOpacity(0.3),
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),

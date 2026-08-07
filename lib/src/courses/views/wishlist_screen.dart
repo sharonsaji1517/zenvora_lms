@@ -30,8 +30,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: AppTheme.brandBackgroundGradient,
+      decoration: BoxDecoration(
+        gradient: AppTheme.brandBackgroundGradientOf(context),
       ),
       child: Scaffold(
         key: _scaffoldKey,
@@ -42,8 +42,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
           centerTitle: false,
           titleSpacing: 0,
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.brandThreeColorGradient,
+            decoration: BoxDecoration(
+              gradient: AppTheme.brandThreeColorGradientOf(context),
             ),
           ),
           leading: IconButton(
@@ -65,8 +65,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
           listenable: _viewModel,
           builder: (context, child) {
             if (_viewModel.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+              return Center(
+                child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
               );
             }
             if (_viewModel.errorMessage != null) {

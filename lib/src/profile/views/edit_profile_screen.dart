@@ -50,9 +50,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         listenable: _viewModel,
         builder: (context, child) {
           if (_viewModel.isLoading) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                color: AppTheme.primaryBlue,
+                color: Theme.of(context).colorScheme.primary,
               ),
             );
           }
@@ -90,7 +90,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryBlue,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 12,
@@ -134,7 +134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             height: 110,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppTheme.primaryBlue, width: 3),
+                              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
                             ),
                             child: ClipOval(
                               child: Image.asset(
@@ -314,11 +314,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      gradient: AppTheme.brandBlueGreenGradient,
+                      gradient: AppTheme.brandBlueGreenGradientOf(context),
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.brandOceanBlue.withValues(alpha: 0.3),
+                          color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 5),
                         ),

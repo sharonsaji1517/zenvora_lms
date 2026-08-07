@@ -9,7 +9,7 @@ class EventsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Events'),
-        backgroundColor: AppTheme.primaryBlue,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       body: Center(
@@ -21,13 +21,13 @@ class EventsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.event_outlined,
                   size: 64,
-                  color: AppTheme.primaryBlue,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 24),

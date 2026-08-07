@@ -32,8 +32,8 @@ class CourseSuccessScreen extends StatelessWidget {
         centerTitle: true,
         titleSpacing: 0,
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.brandThreeColorGradient,
+          decoration: BoxDecoration(
+            gradient: AppTheme.brandThreeColorGradientOf(context),
           ),
         ),
         title: const Text(
@@ -96,7 +96,7 @@ class CourseSuccessScreen extends StatelessWidget {
                     Positioned(
                       top: 25,
                       right: 15,
-                      child: _buildConfettiDot(AppTheme.primaryBlue, 10),
+                      child: _buildConfettiDot(Theme.of(context).colorScheme.primary, 10),
                     ),
                     Positioned(
                       bottom: 20,
@@ -198,7 +198,7 @@ class CourseSuccessScreen extends StatelessWidget {
                 height: 52,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: AppTheme.brandBlueGreenGradient,
+                    gradient: AppTheme.brandBlueGreenGradientOf(context),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ElevatedButton(
@@ -239,12 +239,12 @@ class CourseSuccessScreen extends StatelessWidget {
                     (route) => route.isFirst,
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Go to My Courses',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryBlue,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),

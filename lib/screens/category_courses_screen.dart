@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_theme.dart';
+import '../models/course_model.dart';
+import '../core/services/api_service.dart';
 import '../src/courses/views/course_detail_screen.dart';
 import '../core/routes/app_routes.dart';
 
 class CategoryCoursesScreen extends StatefulWidget {
   final dynamic categoryId;
   final String categoryName;
+  final String? categorySlug;
 
   const CategoryCoursesScreen({
     super.key,
     this.categoryId,
     required this.categoryName,
+    this.categorySlug,
   });
 
   @override
@@ -18,93 +22,45 @@ class CategoryCoursesScreen extends StatefulWidget {
 }
 
 class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
   String? errorMessage;
-
-  // Placeholder dummy course list prepared for future API binding
-  final List<Map<String, dynamic>> _dummyCourses = const [
-    {
-      'id': 1,
-      'name': 'Advanced Safety & Risk Assessment',
-      'duration': '4 Weeks',
-      'courseType': 'Certification',
-      'rating': 4.8,
-      'price': '₹999',
-      'oldPrice': '₹1,499',
-      'image': 'assets/images/carousel/logistics3.jpg',
-      'description': 'Master essential offshore and onshore safety protocols, hazard identification, and risk management.',
-    },
-    {
-      'id': 2,
-      'name': 'Offshore Well Operations & Drills',
-      'duration': '6 Weeks',
-      'courseType': 'Professional',
-      'rating': 4.9,
-      'price': '₹1,299',
-      'oldPrice': '₹1,899',
-      'image': 'assets/images/carousel/logistics1.jpg',
-      'description': 'Comprehensive hands-on simulation covering well control, emergency shutdown, and rig safety routines.',
-    },
-    {
-      'id': 3,
-      'name': 'Blowout Preventer Systems & Hydraulics',
-      'duration': '3 Weeks',
-      'courseType': 'Technical',
-      'rating': 4.7,
-      'price': '₹1,199',
-      'oldPrice': '₹1,599',
-      'image': 'assets/images/carousel/logistics2.jpg',
-      'description': 'In-depth analysis of hydraulic control systems, BOP stack operations, and maintenance procedures.',
-    },
-    {
-      'id': 4,
-      'name': 'Environmental Compliance & HSE Guidelines',
-      'duration': '5 Weeks',
-      'courseType': 'Compliance',
-      'rating': 4.8,
-      'price': '₹899',
-      'oldPrice': '₹1,299',
-      'image': 'assets/images/carousel/NZu2b.jpg',
-      'description': 'Understand global environmental safety standards, zero-spill policies, and audit readiness.',
-    },
-    {
-      'id': 5,
-      'name': 'Rig Structural Dynamics & Maintenance',
-      'duration': '8 Weeks',
-      'courseType': 'Advanced',
-      'rating': 4.9,
-      'price': '₹1,499',
-      'oldPrice': '₹2,099',
-      'image': 'assets/images/carousel/logistics1.jpg',
-      'description': 'Learn load distribution, structural integrity testing, and predictive maintenance for drilling rigs.',
-    },
-    {
-      'id': 6,
-      'name': 'Emergency Response & Crisis Management',
-      'duration': '2 Weeks',
-      'courseType': 'Essential',
-      'rating': 4.8,
-      'price': '₹799',
-      'oldPrice': '₹1,099',
-      'image': 'assets/images/carousel/logistics3.jpg',
-      'description': 'Fast-paced module covering evacuation strategies, command hierarchy, and crisis communication.',
-    },
-  ];
+  List<CourseModel> courses = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCategoryCourses(widget.categoryId);
+    loadCategoryCourses();
   }
 
-  /// Prepared method for future API integration.
-  /// Update this method when backend endpoint is ready to populate category courses dynamically.
-  Future<void> fetchCategoryCourses(dynamic categoryId) async {
-    // Currently using dummy data for UI display
+  Future<void> loadCategoryCourses() async {
     setState(() {
-      isLoading = false;
+      isLoading = true;
       errorMessage = null;
     });
+
+    try {
+      final slug = (widget.categorySlug != null && widget.categorySlug!.trim().isNotEmpty)
+          ? widget.categorySlug!.trim()
+          : widget.categoryId?.toString() ?? '';
+
+      final result = await ApiService().fetchCategoryCourses(slug);
+
+      if (mounted) {
+        setState(() {
+          courses = result;
+          isLoading = false;
+          errorMessage = null;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          courses = [];
+          isLoading = false;
+          errorMessage = 'Unable to load courses. Please try again.';
+        });
+      }
+    }
   }
 
   @override
@@ -120,8 +76,8 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: AppTheme.brandThreeColorGradient,
+            decoration: BoxDecoration(
+              gradient: AppTheme.brandThreeColorGradientOf(context),
             ),
           ),
           leading: IconButton(
@@ -173,7 +129,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${_dummyCourses.length} Courses Available',
+                        '${courses.length} Courses Available',
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -251,7 +207,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                         _buildLoadingState()
                       else if (errorMessage != null)
                         _buildErrorState()
-                      else if (_dummyCourses.isEmpty)
+                      else if (courses.isEmpty)
                         _buildEmptyState()
                       else
                         _buildCourseList(),
@@ -271,9 +227,13 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: _dummyCourses.length,
+      itemCount: courses.length,
       itemBuilder: (context, index) {
-        final course = _dummyCourses[index];
+        final course = courses[index];
+        final imageUrl = course.imageUrl;
+        final isNetworkImage = imageUrl.startsWith('http://') || imageUrl.startsWith('https://') || imageUrl.startsWith('/');
+        final fullImageUrl = imageUrl.startsWith('/') ? '${ApiService.baseUrl.replaceAll('/api', '')}$imageUrl' : imageUrl;
+
         return Container(
           margin: const EdgeInsets.only(bottom: 16.0),
           decoration: BoxDecoration(
@@ -297,18 +257,31 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                 child: SizedBox(
                   height: 130,
                   width: double.infinity,
-                  child: Image.asset(
-                    course['image'],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Center(
-                          child: Icon(Icons.school_outlined, size: 40, color: Colors.grey),
+                  child: isNetworkImage
+                      ? Image.network(
+                          fullImageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(Icons.school_outlined, size: 40, color: Colors.grey),
+                              ),
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          imageUrl.isNotEmpty ? imageUrl : 'assets/images/carousel/NZu2b.jpg',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(Icons.school_outlined, size: 40, color: Colors.grey),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ),
 
@@ -324,7 +297,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            course['name'],
+                            course.name,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -345,7 +318,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                               const Icon(Icons.star_rounded, color: AppTheme.brandGoldenYellow, size: 14),
                               const SizedBox(width: 2),
                               Text(
-                                '${course['rating']}',
+                                '${course.rating}',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
@@ -365,22 +338,22 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                         const Icon(Icons.access_time_rounded, size: 14, color: AppTheme.textLight),
                         const SizedBox(width: 4),
                         Text(
-                          course['duration'],
+                          course.durationDays > 0 ? '${course.durationDays} Days' : 'Self-Paced',
                           style: const TextStyle(fontSize: 12, color: AppTheme.textMedium, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: AppTheme.brandOceanBlue.withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            course['courseType'],
-                            style: const TextStyle(
+                            course.courseType.isNotEmpty ? course.courseType : 'Course',
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.brandOceanBlue,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
                         ),
@@ -390,7 +363,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
 
                     // Description (2 lines max)
                     Text(
-                      course['description'],
+                      course.shortDescription.isNotEmpty ? course.shortDescription : course.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -408,20 +381,11 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                         Row(
                           children: [
                             Text(
-                              course['price'],
+                              '₹${course.fee}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 color: AppTheme.brandEmeraldGreen,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              course['oldPrice'],
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppTheme.textLight,
-                                decoration: TextDecoration.lineThrough,
                               ),
                             ),
                           ],
@@ -433,10 +397,10 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CourseDetailScreen(courseId: course['id']),
+                                builder: (context) => CourseDetailScreen(courseId: course.id),
                                 settings: RouteSettings(
                                   name: AppRoutes.courseDetail,
-                                  arguments: course['id'],
+                                  arguments: course.id,
                                 ),
                               ),
                             );
@@ -449,7 +413,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                           ),
                           child: Ink(
                             decoration: BoxDecoration(
-                              gradient: AppTheme.brandBlueGreenGradient,
+                              gradient: AppTheme.brandBlueGreenGradientOf(context),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Container(
@@ -542,7 +506,7 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () => fetchCategoryCourses(widget.categoryId),
+              onPressed: () => loadCategoryCourses(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryBlue,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

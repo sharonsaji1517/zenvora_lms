@@ -43,8 +43,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Container(
                   width: double.infinity,
                   height: size.height * 0.38,
-                  decoration: const BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.primaryGradientOf(context),
                   ),
                   child: SafeArea(
                     child: Column(
@@ -165,13 +165,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         Container(
                           height: 56,
                           decoration: BoxDecoration(
-                            gradient: _viewModel.isLoading ? null : AppTheme.primaryGradient,
+                            gradient: _viewModel.isLoading ? null : AppTheme.primaryGradientOf(context),
                             color: _viewModel.isLoading ? AppTheme.textLight : null,
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               if (!_viewModel.isLoading)
                                 BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
