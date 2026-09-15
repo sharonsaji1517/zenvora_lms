@@ -9,6 +9,7 @@ class HomeViewModel extends ChangeNotifier {
   int _currentBannerIndex = 0;
   String _selectedCategoryId = '';
   List<CourseModel> _courses = [];
+  List<CourseModel> _enrolledCourses = [];
   List<CategoryModel> _categories = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -30,12 +31,37 @@ class HomeViewModel extends ChangeNotifier {
   String get selectedCategoryId => _selectedCategoryId;
   List<CategoryModel> get categories => _categories;
   List<CourseModel> get courses => _courses;
+  List<CourseModel> get enrolledCourses => _enrolledCourses;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
   List<CourseModel> get rigAssociatedCourses => _courses;
   List<CourseModel> get rigCourses => _courses;
   List<CourseModel> get featuredCourses => _courses;
+
+  Future<void> loadEnrolledCourses() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final token = await UserPreferencesService().getToken();
+      if (token == null || token.isEmpty) {
+        _enrolledCourses = [];
+        _errorMessage = 'Please log in to view your enrolled courses.';
+      } else {
+        final apiService = ApiService();
+        _enrolledCourses = await apiService.getStudentDashboard();
+        _courses = _enrolledCourses;
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to load enrolled courses. Please try again.';
+      _enrolledCourses = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> loadTopCategories() async {
     try {

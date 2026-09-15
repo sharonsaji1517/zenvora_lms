@@ -22,7 +22,7 @@ class AppTheme {
   static const Color accentOrange = goldenAccent;
 
   // Backgrounds & Neutrals
-  static const Color backgroundLight = Color(0xFFF8FAFC);
+  static const Color backgroundLight = Color(0xFFF4F8FD);
   static const Color cardLight = Colors.white;
   static const Color textDark = Color(0xFF0F172A);
   static const Color textMedium = Color(0xFF475569);
@@ -34,7 +34,6 @@ class AppTheme {
     colors: [
       brandDeepBlue,
       brandOceanBlue,
-      brandEmeraldGreen,
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -42,8 +41,8 @@ class AppTheme {
 
   static const LinearGradient brandBlueGreenGradient = LinearGradient(
     colors: [
+      brandDeepBlue,
       brandOceanBlue,
-      brandEmeraldGreen,
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -51,19 +50,17 @@ class AppTheme {
 
   static const LinearGradient brandBackgroundGradient = LinearGradient(
     colors: [
-      Color(0xFFEDF4FE),
-      Color(0xFFF6F9FF),
-      Color(0xFFEEF9F0),
+      Color(0xFFF4F8FD),
+      Color(0xFFF4F8FD),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    stops: [0.0, 0.5, 1.0],
   );
 
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [
       primaryBlue,
-      accentGreen,
+      secondaryBlue,
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -71,8 +68,8 @@ class AppTheme {
 
   static const LinearGradient greenGradient = LinearGradient(
     colors: [
-      accentGreen,
-      lightGreen,
+      primaryBlue,
+      secondaryBlue,
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -80,42 +77,41 @@ class AppTheme {
 
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [
-      primaryBlue,
-      secondaryBlue,
+      Color(0xFFF4F8FD),
+      Color(0xFFF4F8FD),
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
-  // Dynamic Gradients
+  // Dynamic Gradients (Use ONLY Primary & Secondary colors for branding elements)
   static LinearGradient getBrandThreeColorGradient({Color? primary, Color? secondary}) {
     return LinearGradient(
       colors: [
         primary ?? brandDeepBlue,
         secondary ?? brandOceanBlue,
-        brandEmeraldGreen,
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
   }
 
-  static LinearGradient getBrandBlueGreenGradient({Color? secondary}) {
+  static LinearGradient getBrandBlueGreenGradient({Color? primary, Color? secondary}) {
     return LinearGradient(
       colors: [
+        primary ?? brandDeepBlue,
         secondary ?? brandOceanBlue,
-        brandEmeraldGreen,
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
   }
 
-  static LinearGradient getPrimaryGradient({Color? primary}) {
+  static LinearGradient getPrimaryGradient({Color? primary, Color? secondary}) {
     return LinearGradient(
       colors: [
         primary ?? primaryBlue,
-        accentGreen,
+        secondary ?? secondaryBlue,
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
@@ -123,10 +119,10 @@ class AppTheme {
   }
 
   static LinearGradient getBackgroundGradient({Color? primary, Color? secondary}) {
-    return LinearGradient(
+    return const LinearGradient(
       colors: [
-        primary ?? primaryBlue,
-        secondary ?? secondaryBlue,
+        Color(0xFFF4F8FD),
+        Color(0xFFF4F8FD),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -136,13 +132,12 @@ class AppTheme {
   // Context-aware dynamic gradient getters using Theme.of(context)
   static LinearGradient primaryGradientOf(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    return getPrimaryGradient(primary: primary);
+    final secondary = Theme.of(context).colorScheme.secondary;
+    return getPrimaryGradient(primary: primary, secondary: secondary);
   }
 
   static LinearGradient backgroundGradientOf(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final secondary = Theme.of(context).colorScheme.secondary;
-    return getBackgroundGradient(primary: primary, secondary: secondary);
+    return getBackgroundGradient();
   }
 
   static LinearGradient brandThreeColorGradientOf(BuildContext context) {
@@ -152,22 +147,19 @@ class AppTheme {
   }
 
   static LinearGradient brandBlueGreenGradientOf(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     final secondary = Theme.of(context).colorScheme.secondary;
-    return getBrandBlueGreenGradient(secondary: secondary);
+    return getBrandBlueGreenGradient(primary: primary, secondary: secondary);
   }
 
   static LinearGradient brandBackgroundGradientOf(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final secondary = Theme.of(context).colorScheme.secondary;
-    return LinearGradient(
+    return const LinearGradient(
       colors: [
-        primary.withOpacity(0.08),
-        Color.alphaBlend(secondary.withOpacity(0.04), Colors.white),
-        Color(0xFFEEF9F0),
+        Color(0xFFF4F8FD),
+        Color(0xFFF4F8FD),
       ],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      stops: const [0.0, 0.5, 1.0],
     );
   }
 

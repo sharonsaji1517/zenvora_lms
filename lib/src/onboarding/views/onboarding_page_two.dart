@@ -68,7 +68,7 @@ class OnboardingPageTwo extends StatelessWidget {
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                AppTheme.goldenAccent.withOpacity(0.1),
+                                Theme.of(context).colorScheme.secondary.withOpacity(0.1),
                                 Theme.of(context).colorScheme.primary.withOpacity(0.03),
                                 Colors.transparent,
                               ],

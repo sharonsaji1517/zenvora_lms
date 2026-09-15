@@ -5,12 +5,17 @@ import 'core/theme/app_theme.dart';
 import 'core/utils/color_helper.dart';
 import 'viewmodels/app_settings_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final appSettingsProvider = AppSettingsProvider();
+  await appSettingsProvider.fetchAppSettings();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AppSettingsProvider()..fetchAppSettings(),
+        ChangeNotifierProvider<AppSettingsProvider>.value(
+          value: appSettingsProvider,
         ),
       ],
       child: const ZenvoraApp(),

@@ -3,6 +3,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../models/course_model.dart';
 import '../view_models/course_detail_view_model.dart';
 import 'widgets/overview_tab_view.dart';
+import 'widgets/course_enrollment_modal.dart';
 import '../../../../core/services/user_preferences_service.dart';
 
 class CourseDetailScreen extends StatefulWidget {
@@ -341,7 +342,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                                 onPressed: course.isEnrolled
                                     ? null
                                     : () {
-                                        _viewModel!.enrollInCourse(context);
+                                        showCourseEnrollmentModal(
+                                          context,
+                                          course,
+                                        );
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.accentGreen,
@@ -352,24 +356,15 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                child: _viewModel!.isEnrolling
-                                    ? const SizedBox(
-                                        height: 16,
-                                        width: 16,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(
-                                        course.isEnrolled
-                                            ? 'Enrolled'
-                                            : 'Enroll Now',
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                child: Text(
+                                  course.isEnrolled
+                                      ? 'Enrolled'
+                                      : 'Enroll Now',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

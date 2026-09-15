@@ -154,6 +154,34 @@ class ApiService {
     );
   }
 
+  Future<List<CourseModel>> getStudentDashboard() async {
+    try {
+      final token = await UserPreferencesService().getToken();
+      if (token == null || token.isEmpty) {
+        return [];
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/student/dashboard'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['courses'] != null) {
+          final List list = data['courses'];
+          return list.map((json) => CourseModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<ClassroomModel?> getStudentClassroom(int courseId) async {
     try {
       final token = await UserPreferencesService().getToken();

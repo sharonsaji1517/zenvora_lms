@@ -294,11 +294,11 @@ class _CourseEnrollmentScreenState extends State<CourseEnrollmentScreen> {
             width: double.infinity,
             height: 54,
             decoration: BoxDecoration(
-              gradient: AppTheme.brandBlueGreenGradient,
+              gradient: AppTheme.brandBlueGreenGradientOf(context),
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.brandEmeraldGreen.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),

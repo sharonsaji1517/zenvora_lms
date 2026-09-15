@@ -87,10 +87,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                child: const DynamicLogoWidget(
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
+                child: const ClipOval(
+                  child: Padding(
+                    padding: EdgeInsets.all(4),
+                    child: DynamicLogoWidget(
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),

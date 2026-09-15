@@ -10,8 +10,8 @@ class DynamicLogoWidget extends StatelessWidget {
 
   const DynamicLogoWidget({
     super.key,
-    this.width = 64,
-    this.height = 64,
+    this.width = 70,
+    this.height = 70,
     this.fit = BoxFit.contain,
     this.fallbackAssetPath = 'assets/icon/app_icon.png',
   });
@@ -27,7 +27,8 @@ class DynamicLogoWidget extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => _buildFallbackAsset(context),
+        errorBuilder: (context, error, stackTrace) =>
+            _buildFallbackAsset(context),
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return _buildFallbackAsset(context);

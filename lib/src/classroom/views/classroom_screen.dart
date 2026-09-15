@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/api_service.dart';
+import '../../../../models/course_model.dart';
 import '../models/classroom_model.dart';
 import '../view_models/classroom_view_model.dart';
 
@@ -13,7 +15,7 @@ class ClassroomScreen extends StatefulWidget {
 class _ClassroomScreenState extends State<ClassroomScreen> {
   late final ClassroomViewModel _viewModel;
   bool _isInit = false;
-  int _currentCourseId = 1;
+  int _currentCourseId = 0;
 
   @override
   void initState() {
@@ -28,9 +30,31 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args is int) {
         _currentCourseId = args;
+        _viewModel.fetchClassroom(_currentCourseId);
+      } else if (args is String && int.tryParse(args) != null) {
+        _currentCourseId = int.parse(args);
+        _viewModel.fetchClassroom(_currentCourseId);
+      } else if (args is CourseModel) {
+        _currentCourseId = args.id;
+        _viewModel.fetchClassroom(_currentCourseId);
+      } else {
+        _fetchDefaultClassroom();
       }
-      _viewModel.fetchClassroom(_currentCourseId);
       _isInit = true;
+    }
+  }
+
+  Future<void> _fetchDefaultClassroom() async {
+    try {
+      final courses = await ApiService().getStudentDashboard();
+      if (courses.isNotEmpty) {
+        _currentCourseId = courses.first.id;
+        _viewModel.fetchClassroom(_currentCourseId);
+      } else {
+        _viewModel.fetchClassroom(_currentCourseId);
+      }
+    } catch (e) {
+      _viewModel.fetchClassroom(_currentCourseId);
     }
   }
 

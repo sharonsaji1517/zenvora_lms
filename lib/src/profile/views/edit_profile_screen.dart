@@ -161,7 +161,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              gradient: AppTheme.brandBlueGreenGradient,
+                              gradient: AppTheme.brandBlueGreenGradientOf(context),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.2),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../src/home/views/widgets/left_navigation_drawer.dart';
 import '../widgets/menu_list_tile.dart';
 import '../core/services/user_preferences_service.dart';
+import '../core/services/api_service.dart';
 import '../core/theme/app_theme.dart';
 import '../core/routes/app_routes.dart';
 
@@ -15,6 +16,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String _fullName = 'Guest User';
   String _email = 'guest@example.com';
+  int? _activeCourseId;
+  String _activeCourseTitle = 'Enrolled Course';
+  int _enrolledCoursesCount = 0;
 
   @override
   void initState() {
@@ -26,10 +30,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefsService = UserPreferencesService();
     final name = await prefsService.getFullName();
     final email = await prefsService.getEmail();
-    setState(() {
-      _fullName = name;
-      _email = email;
-    });
+    int? activeId;
+    String activeTitle = 'Enrolled Course';
+    int count = 0;
+
+    try {
+      final courses = await ApiService().getStudentDashboard();
+      count = courses.length;
+      if (courses.isNotEmpty) {
+        activeId = courses.first.id;
+        activeTitle = courses.first.name;
+      }
+    } catch (e) {
+      // Graceful fallback
+    }
+
+    if (mounted) {
+      setState(() {
+        _fullName = name;
+        _email = email;
+        _activeCourseId = activeId;
+        _activeCourseTitle = activeTitle;
+        _enrolledCoursesCount = count;
+      });
+    }
   }
 
   @override
@@ -305,7 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: AppTheme.brandBackgroundGradient,
+        gradient: AppTheme.brandBackgroundGradientOf(context),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppTheme.borderLight.withOpacity(0.5)),
         boxShadow: [
@@ -393,7 +417,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.play_lesson_rounded,
             title: 'My Courses',
             subtitle: 'Continue where you left off',
-            onTap: () {},
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.myCourses);
+            },
           ),
           const Divider(height: 1, indent: 64),
           _buildActionTile(
@@ -509,7 +535,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(height: 1),
           ),
-          _buildInfoRow(Icons.book_outlined, 'Course', 'Safety Induction'),
+          _buildInfoRow(Icons.book_outlined, 'Course', _activeCourseTitle),
         ],
       ),
     );
@@ -583,7 +609,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: _buildDashboardCard(
                 icon: Icons.menu_book_rounded,
-                value: '1',
+                value: '$_enrolledCoursesCount',
                 subtitle: 'Active Course',
                 iconColor: AppTheme.primaryBlue,
                 bgColor: AppTheme.primaryBlue.withOpacity(0.1),
@@ -792,7 +818,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.classroom, arguments: 4);
+                if (_activeCourseId != null) {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.classroom,
+                    arguments: _activeCourseId,
+                  );
+                } else {
+                  Navigator.pushNamed(context, AppRoutes.myCourses);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryBlue,

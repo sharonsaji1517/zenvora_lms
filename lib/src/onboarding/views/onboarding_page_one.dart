@@ -64,7 +64,7 @@ class OnboardingPageOne extends StatelessWidget {
                             gradient: RadialGradient(
                               colors: [
                                 Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                                AppTheme.brandOceanBlue.withOpacity(0.02),
+                                Theme.of(context).colorScheme.secondary.withOpacity(0.02),
                                 Colors.transparent,
                               ],
                             ),

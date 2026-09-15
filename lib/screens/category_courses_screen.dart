@@ -66,8 +66,8 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: AppTheme.brandBackgroundGradient,
+      decoration: BoxDecoration(
+        gradient: AppTheme.brandBackgroundGradientOf(context),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
