@@ -17,8 +17,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late final SignUpViewModel _viewModel;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmController = TextEditingController();
+  final TextEditingController _placeController = TextEditingController();
 
   @override
   void initState() {
@@ -30,8 +31,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
-    _confirmController.dispose();
+    _placeController.dispose();
     _viewModel.dispose();
     super.dispose();
   }
@@ -70,7 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
+                                color: Colors.black.withValues(alpha: 0.15),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -96,7 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Text(
                           'Empowering Oil & Gas Education',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.85),
+                            color: Colors.white.withValues(alpha: 0.85),
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 2,
@@ -141,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 height: 88,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                                  color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                                   border: Border.all(
                                     color: AppTheme.primaryBlue,
                                     width: 2,
@@ -194,10 +196,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.redAccent.withOpacity(0.1),
+                              color: Colors.redAccent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: Colors.redAccent.withOpacity(0.3),
+                                color: Colors.redAccent.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Text(
@@ -213,6 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
 
                         // Form Fields
+                        // 1. Full Name
                         TextFormField(
                           controller: _nameController,
                           keyboardType: TextInputType.name,
@@ -228,6 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 16),
 
+                        // 2. Email Address
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -243,6 +247,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 16),
 
+                        // 3. Phone Number
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          onChanged: _viewModel.setPhone,
+                          decoration: const InputDecoration(
+                            hintText: 'Phone number',
+                            prefixIcon: Icon(
+                              Icons.phone_outlined,
+                              color: AppTheme.textLight,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 4. Password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: _viewModel.obscurePassword,
@@ -267,26 +288,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 16),
 
+                        // 5. Place
                         TextFormField(
-                          controller: _confirmController,
-                          obscureText: _viewModel.obscureConfirmPassword,
+                          controller: _placeController,
+                          keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.done,
-                          onChanged: _viewModel.setConfirmPassword,
-                          decoration: InputDecoration(
-                            hintText: 'Confirm Password',
-                            prefixIcon: const Icon(
-                              Icons.lock_outlined,
+                          onChanged: _viewModel.setPlace,
+                          decoration: const InputDecoration(
+                            hintText: 'Place / Location',
+                            prefixIcon: Icon(
+                              Icons.location_on_outlined,
                               color: AppTheme.textLight,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _viewModel.obscureConfirmPassword
-                                    ? Icons.visibility_off_outlined
-                                    : Icons.visibility_outlined,
-                                color: AppTheme.textLight,
-                              ),
-                              onPressed:
-                                  _viewModel.toggleConfirmPasswordVisibility,
                             ),
                           ),
                         ),
@@ -355,7 +367,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             boxShadow: [
                               if (!_viewModel.isLoading)
                                 BoxShadow(
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),

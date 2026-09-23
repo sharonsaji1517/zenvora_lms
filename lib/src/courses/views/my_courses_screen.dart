@@ -159,7 +159,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
             final enrolledList = _viewModel.enrolledCourses.isNotEmpty
                 ? _viewModel.enrolledCourses
                 : _viewModel.courses;
-            final displayedCourses = enrolledList.take(2).toList();
+            final displayedCourses = enrolledList;
 
             if (displayedCourses.isEmpty) {
               return RefreshIndicator(
@@ -185,12 +185,12 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                   parent: BouncingScrollPhysics(),
                 ),
                 itemCount: displayedCourses.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 14),
+                separatorBuilder: (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final course = displayedCourses[index];
                   return HorizontalCourseCard(
                     course: course,
-                    actionButtonText: 'Continue Learning',
+                    actionButtonText: 'Go to Classroom',
                     onFavoriteTap: () => _viewModel.toggleFavorite(course.id),
                     onTap: () {
                       Navigator.pushNamed(

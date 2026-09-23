@@ -18,22 +18,14 @@ class CourseDetailScreen extends StatefulWidget {
   State<CourseDetailScreen> createState() => _CourseDetailScreenState();
 }
 
-class _CourseDetailScreenState extends State<CourseDetailScreen>
-    with SingleTickerProviderStateMixin {
+class _CourseDetailScreenState extends State<CourseDetailScreen> {
   CourseDetailViewModel? _viewModel;
-  late TabController _tabController;
   String _fullName = 'Guest User';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      if (_viewModel != null) {
-        _viewModel!.setActiveTab(_tabController.index);
-      }
-    });
   }
 
   Future<void> _loadUserData() async {
@@ -72,13 +64,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
         initialCourse: initialCourse,
       );
       _viewModel!.fetchCourseDetail();
-      _tabController.index = _viewModel!.activeTabIndex;
     }
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _viewModel?.dispose();
     super.dispose();
   }
@@ -216,7 +206,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                   ),
                 ),
 
-                // Info Section & Tab Bar Area
+                // Info Section
                 SliverToBoxAdapter(
                   child: Container(
                     padding: const EdgeInsets.all(20),
@@ -369,56 +359,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-
-                        // Tab Bar
-                        TabBar(
-                          controller: _tabController,
-                          indicatorColor: AppTheme.primaryBlue,
-                          labelColor: AppTheme.primaryBlue,
-                          unselectedLabelColor: AppTheme.textLight,
-                          labelStyle: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14),
-                          unselectedLabelStyle: const TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 14),
-                          tabs: const [
-                            Tab(text: 'Overview'),
-                            Tab(text: 'Syllabus'),
-                            Tab(text: 'Resources'),
-                          ],
-                        ),
                       ],
                     ),
                   ),
                 ),
               ];
             },
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                OverviewTabView(course: course),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Text(
-                      'Syllabus for ${course.name} will be available soon.',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppTheme.textMedium),
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Text(
-                      'Resources for ${course.name} will be available soon.',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppTheme.textMedium),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            body: OverviewTabView(course: course),
           ),
         );
       },

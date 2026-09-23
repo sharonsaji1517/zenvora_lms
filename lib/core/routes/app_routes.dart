@@ -13,6 +13,7 @@ import '../../screens/profile_screen.dart';
 import '../../src/profile/views/edit_profile_screen.dart';
 import '../../src/classroom/views/classroom_screen.dart';
 import '../../screens/settings_screen.dart';
+import '../../screens/courses_screen.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String courseEnrollment = '/course-enrollment';
   static const String enrollmentSuccess = '/enrollment-success';
   static const String myCourses = '/my-courses';
+  static const String courses = '/courses';
   static const String profile = '/profile';
   static const String editProfile = '/edit-profile';
   static const String classroom = '/classroom';
@@ -42,6 +44,7 @@ class AppRoutes {
       courseEnrollment: (context) => const CourseEnrollmentScreen(),
       enrollmentSuccess: (context) => const CourseSuccessScreen(),
       myCourses: (context) => const MyCoursesScreen(),
+      courses: (context) => const CoursesScreen(),
       profile: (context) => const ProfileScreen(),
       editProfile: (context) => const EditProfileScreen(),
       classroom: (context) => const ClassroomScreen(),

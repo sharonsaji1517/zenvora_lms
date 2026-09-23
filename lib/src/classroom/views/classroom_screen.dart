@@ -16,6 +16,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   late final ClassroomViewModel _viewModel;
   bool _isInit = false;
   int _currentCourseId = 0;
+  int _selectedTabIndex = 0; // 0: PDF, 1: PPT, 2: YouTube Links, 3: Private Videos
 
   @override
   void initState() {
@@ -158,243 +159,18 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Welcome Banner with Brand Gradient
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 400),
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    builder: (context, opacity, child) {
-                      return Opacity(
-                        opacity: opacity,
-                        child: child,
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24.0),
-                      decoration: BoxDecoration(
-                        gradient: AppTheme.brandThreeColorGradientOf(context),
-                        borderRadius: BorderRadius.circular(24.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.brandOceanBlue.withValues(alpha: 0.25),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '👋 Welcome Back',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Access your enrolled classes and continue learning.',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.9),
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Statistics Row
-                  TweenAnimationBuilder<double>(
-                    duration: const Duration(milliseconds: 500),
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    builder: (context, opacity, child) {
-                      return Opacity(
-                        opacity: opacity,
-                        child: child,
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildStatCard(
-                            title: 'Courses',
-                            value: '${_viewModel.coursesCount}',
-                            icon: Icons.menu_book_rounded,
-                            iconColor: Theme.of(context).colorScheme.primary,
-                            bgColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildStatCard(
-                            title: 'Lessons',
-                            value: '${_viewModel.lessonsCount}',
-                            icon: Icons.play_circle_outline_rounded,
-                            iconColor: Theme.of(context).colorScheme.secondary,
-                            bgColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildStatCard(
-                            title: 'Completed',
-                            value: _viewModel.completionRate,
-                            icon: Icons.workspace_premium_rounded,
-                            iconColor: AppTheme.accentGreen,
-                            bgColor: AppTheme.accentGreen.withValues(alpha: 0.1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Course Header Card
+                  // 1. Dynamic Course Header Card (Image & Name/Details)
                   if (course != null) ...[
                     _buildCourseHeaderCard(course),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                   ],
 
-                  // Videos Section
-                  if (classroom != null && classroom.videos.isNotEmpty) ...[
-                    _buildSectionHeader('Videos', Icons.play_circle_fill_rounded, Theme.of(context).colorScheme.primary),
-                    const SizedBox(height: 12),
-                    ...classroom.videos.map((video) => _buildResourceTile(
-                          title: video.title,
-                          icon: Icons.play_arrow_rounded,
-                          iconColor: Theme.of(context).colorScheme.primary,
-                          subtitle: 'Video Lesson',
-                        )),
-                    const SizedBox(height: 24),
-                  ],
+                  // 2. Content Tabs (PDF | PPT | YouTube Links | Private Videos)
+                  _buildContentTabs(classroom),
+                  const SizedBox(height: 20),
 
-                  // YouTube Links Section
-                  if (classroom != null && classroom.youtubeLinks.isNotEmpty) ...[
-                    _buildSectionHeader('YouTube Links', Icons.video_library_rounded, Colors.redAccent),
-                    const SizedBox(height: 12),
-                    ...classroom.youtubeLinks.map((yt) => _buildResourceTile(
-                          title: yt.title,
-                          icon: Icons.play_circle_outline_rounded,
-                          iconColor: Colors.redAccent,
-                          subtitle: 'YouTube Reference',
-                        )),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // PDF Section
-                  _buildSectionHeader('PDF Resources', Icons.picture_as_pdf_rounded, Colors.deepOrangeAccent),
-                  const SizedBox(height: 12),
-                  if (classroom == null || classroom.pdfs.isEmpty)
-                    _buildEmptyResourceCard('No PDF resources available', Icons.picture_as_pdf_outlined)
-                  else
-                    ...classroom.pdfs.map((pdf) => _buildResourceTile(
-                          title: pdf.title,
-                          icon: Icons.picture_as_pdf_rounded,
-                          iconColor: Colors.deepOrangeAccent,
-                          subtitle: 'PDF Document',
-                        )),
-                  const SizedBox(height: 24),
-
-                  // PPT Section
-                  _buildSectionHeader('PPT Presentations', Icons.slideshow_rounded, Colors.amber.shade800),
-                  const SizedBox(height: 12),
-                  if (classroom == null || classroom.ppts.isEmpty)
-                    _buildEmptyResourceCard('No PPT resources available', Icons.slideshow_outlined)
-                  else
-                    ...classroom.ppts.map((ppt) => _buildResourceTile(
-                          title: ppt.title,
-                          icon: Icons.slideshow_rounded,
-                          iconColor: Colors.amber.shade800,
-                          subtitle: 'PPT Presentation',
-                        )),
-                  const SizedBox(height: 24),
-
-                  // Private Videos Section
-                  _buildSectionHeader('Private Videos', Icons.lock_clock_rounded, Theme.of(context).colorScheme.secondary),
-                  const SizedBox(height: 12),
-                  if (classroom == null || classroom.privateVideos.isEmpty)
-                    _buildEmptyResourceCard('No private videos available', Icons.lock_outline_rounded)
-                  else
-                    ...classroom.privateVideos.map((pv) => _buildResourceTile(
-                          title: pv.title,
-                          icon: Icons.lock_clock_rounded,
-                          iconColor: Theme.of(context).colorScheme.secondary,
-                          subtitle: 'Private Video',
-                        )),
-                  const SizedBox(height: 24),
-
-                  // Quick Actions Buttons
-                  Row(
-                    children: [
-                      // Primary Button
-                      Expanded(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            gradient: AppTheme.brandBlueGreenGradientOf(context),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.25),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              'Join Classroom',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Secondary Outlined Button
-                      Expanded(
-                        child: SizedBox(
-                          height: 50,
-                          child: OutlinedButton(
-                            onPressed: null,
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                color: AppTheme.primaryBlue.withValues(alpha: 0.4),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              'Coming Soon',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.textMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // 3. Selected Category Content Only
+                  _buildSelectedContent(classroom),
                   const SizedBox(height: 24),
 
                   // Bottom Information Card
@@ -418,7 +194,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         SizedBox(width: 14),
                         Expanded(
                           child: Text(
-                            'Once you enroll in a course, your classroom sessions, live classes and study materials will appear here.',
+                            'Your classroom materials and study sessions for this enrolled course are updated automatically.',
                             style: TextStyle(
                               fontSize: 13,
                               color: AppTheme.textMedium,
@@ -439,6 +215,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   }
 
   Widget _buildCourseHeaderCard(ClassroomCourseModel course) {
+    final imagePath = course.thumbnail;
+    final bool hasValidUrl = imagePath != null &&
+        imagePath.trim().isNotEmpty &&
+        (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('/'));
+    final fullUrl = hasValidUrl
+        ? (imagePath.startsWith('/')
+            ? 'https://zen.trynet.work$imagePath'
+            : imagePath)
+        : null;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -460,9 +246,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             borderRadius: BorderRadius.circular(16),
             child: AspectRatio(
               aspectRatio: 16 / 9,
-              child: (course.thumbnail != null && course.thumbnail!.startsWith('http'))
+              child: fullUrl != null
                   ? Image.network(
-                      course.thumbnail!,
+                      fullUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => _buildImageFallback(),
                     )
@@ -479,22 +265,21 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              if (course.courseFee != null) ...[
-                _buildBadge(Icons.monetization_on_outlined, course.courseFee!, AppTheme.accentGreen),
-                const SizedBox(width: 8),
+          if (course.courseFee != null || course.duration != null || course.courseType != null) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (course.courseFee != null && course.courseFee!.trim().isNotEmpty)
+                  _buildBadge(Icons.monetization_on_outlined, course.courseFee!, AppTheme.accentGreen),
+                if (course.duration != null && course.duration!.trim().isNotEmpty)
+                  _buildBadge(Icons.schedule_rounded, course.duration!, AppTheme.brandOceanBlue),
+                if (course.courseType != null && course.courseType!.trim().isNotEmpty)
+                  _buildBadge(Icons.school_outlined, course.courseType!, AppTheme.primaryBlue),
               ],
-              if (course.duration != null) ...[
-                _buildBadge(Icons.schedule_rounded, course.duration!, AppTheme.brandOceanBlue),
-                const SizedBox(width: 8),
-              ],
-              if (course.courseType != null) ...[
-                _buildBadge(Icons.school_outlined, course.courseType!, AppTheme.primaryBlue),
-              ],
-            ],
-          ),
+            ),
+          ],
         ],
       ),
     );
@@ -538,21 +323,204 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon, Color iconColor) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: iconColor),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textDark,
-          ),
-        ),
-      ],
+  Widget _buildContentTabs(ClassroomModel? classroom) {
+    final tabs = [
+      {'label': 'PDF', 'icon': Icons.picture_as_pdf_rounded, 'count': classroom?.pdfs.length ?? 0},
+      {'label': 'PPT', 'icon': Icons.slideshow_rounded, 'count': classroom?.ppts.length ?? 0},
+      {'label': 'YouTube Links', 'icon': Icons.play_circle_fill_rounded, 'count': classroom?.youtubeLinks.length ?? 0},
+      {'label': 'Private Videos', 'icon': Icons.lock_rounded, 'count': classroom?.privateVideos.length ?? 0},
+    ];
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: List.generate(tabs.length, (index) {
+          final tab = tabs[index];
+          final isSelected = _selectedTabIndex == index;
+          final count = tab['count'] as int;
+
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index < tabs.length - 1 ? 10.0 : 0.0,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedTabIndex = index;
+                  });
+                },
+                borderRadius: BorderRadius.circular(14),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: isSelected
+                        ? AppTheme.brandBlueGreenGradientOf(context)
+                        : null,
+                    color: isSelected ? null : Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.transparent
+                          : AppTheme.borderLight,
+                      width: 1,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.25),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ]
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        tab['icon'] as IconData,
+                        size: 16,
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.textMedium,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        tab['label'] as String,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.w600,
+                          color: isSelected
+                              ? Colors.white
+                              : AppTheme.textDark,
+                        ),
+                      ),
+                      if (count > 0) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.white.withValues(alpha: 0.25)
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '$count',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppTheme.textMedium,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
     );
+  }
+
+  Widget _buildSelectedContent(ClassroomModel? classroom) {
+    if (classroom == null) {
+      return _buildEmptyResourceCard('No classroom content available', Icons.folder_open_rounded);
+    }
+
+    switch (_selectedTabIndex) {
+      case 0: // PDF
+        final pdfs = classroom.pdfs;
+        if (pdfs.isEmpty) {
+          return _buildEmptyResourceCard('No PDF resources available', Icons.picture_as_pdf_outlined);
+        }
+        return Column(
+          children: pdfs
+              .map((pdf) => _buildResourceTile(
+                    title: pdf.title,
+                    icon: Icons.picture_as_pdf_rounded,
+                    iconColor: Colors.deepOrangeAccent,
+                    subtitle: 'PDF Document',
+                  ))
+              .toList(),
+        );
+
+      case 1: // PPT
+        final ppts = classroom.ppts;
+        if (ppts.isEmpty) {
+          return _buildEmptyResourceCard('No PPT resources available', Icons.slideshow_outlined);
+        }
+        return Column(
+          children: ppts
+              .map((ppt) => _buildResourceTile(
+                    title: ppt.title,
+                    icon: Icons.slideshow_rounded,
+                    iconColor: Colors.amber.shade800,
+                    subtitle: 'PPT Presentation',
+                  ))
+              .toList(),
+        );
+
+      case 2: // YouTube Links
+        final youtubeLinks = classroom.youtubeLinks;
+        if (youtubeLinks.isEmpty) {
+          return _buildEmptyResourceCard('No YouTube links available', Icons.video_library_outlined);
+        }
+        return Column(
+          children: youtubeLinks
+              .map((yt) => _buildResourceTile(
+                    title: yt.title,
+                    icon: Icons.play_circle_outline_rounded,
+                    iconColor: Colors.redAccent,
+                    subtitle: 'YouTube Reference',
+                  ))
+              .toList(),
+        );
+
+      case 3: // Private Videos
+        final privateVideos = classroom.privateVideos;
+        if (privateVideos.isEmpty) {
+          return _buildEmptyResourceCard('No private videos available', Icons.lock_outline_rounded);
+        }
+        return Column(
+          children: privateVideos
+              .map((pv) => _buildResourceTile(
+                    title: pv.title,
+                    icon: Icons.lock_clock_rounded,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    subtitle: 'Private Video',
+                  ))
+              .toList(),
+        );
+
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Widget _buildResourceTile({
@@ -562,27 +530,28 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     required String subtitle,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.6)),
+        border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.8)),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: iconColor, size: 20),
+          child: Icon(icon, color: iconColor, size: 22),
         ),
         title: Text(
           title,
@@ -592,12 +561,20 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             color: AppTheme.textDark,
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppTheme.textMedium,
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            subtitle,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.textMedium,
+            ),
           ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios_rounded,
+          size: 14,
+          color: AppTheme.textLight.withValues(alpha: 0.8),
         ),
       ),
     );
@@ -605,82 +582,28 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   Widget _buildEmptyResourceCard(String message, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.6)),
+        border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.8)),
       ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppTheme.textLight, size: 22),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: AppTheme.textLight, size: 40),
+            const SizedBox(height: 12),
+            Text(
               message,
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 14,
                 color: AppTheme.textMedium,
                 fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color iconColor,
-    required Color bgColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.6)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.textMedium,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

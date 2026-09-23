@@ -11,7 +11,7 @@ import 'widgets/top_categories_section.dart';
 import 'widgets/popular_courses_section.dart';
 import 'package:zenvoraapp/screens/profile_screen.dart';
 import 'package:zenvoraapp/screens/instructors_screen.dart';
-import 'package:zenvoraapp/screens/events_screen.dart';
+import 'package:zenvoraapp/screens/courses_screen.dart';
 import '../../courses/views/my_courses_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -256,8 +256,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               _buildNavItem(
                 context,
-                icon: Icons.event_outlined,
-                label: 'Events',
+                icon: Icons.school_outlined,
+                label: 'Courses',
                 isSelected: false,
               ),
               _buildNavItem(
@@ -348,10 +348,10 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             MaterialPageRoute(builder: (context) => const InstructorsScreen()),
           );
-        } else if (label == 'Events') {
+        } else if (label == 'Courses') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const EventsScreen()),
+            MaterialPageRoute(builder: (context) => const CoursesScreen()),
           );
         }
       },
