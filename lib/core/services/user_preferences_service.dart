@@ -7,7 +7,6 @@ class UserPreferencesService {
   static const String _keyFullName = 'user_full_name';
   static const String _keyEmail = 'user_email';
   static const String _keyToken = 'user_token';
-  static const String _keyWishlist = 'user_wishlist';
   static const String _keyOnboardingCompleted = 'onboarding_completed';
   static const String _keyHasSeenOnboarding = 'has_seen_onboarding';
   static const String _keyIsLoggedIn = 'is_logged_in';
@@ -74,28 +73,11 @@ class UserPreferencesService {
     return prefs.getString(_keyEmail) ?? 'guest@example.com';
   }
 
-  Future<List<String>> getWishlist() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getStringList(_keyWishlist) ?? [];
-  }
-
-  Future<void> toggleWishlist(String courseId) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> wishlist = prefs.getStringList(_keyWishlist) ?? [];
-    if (wishlist.contains(courseId)) {
-      wishlist.remove(courseId);
-    } else {
-      wishlist.add(courseId);
-    }
-    await prefs.setStringList(_keyWishlist, wishlist);
-  }
-
   Future<void> clearUserData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyFullName);
     await prefs.remove(_keyEmail);
     await prefs.remove(_keyToken);
-    await prefs.remove(_keyWishlist);
     await prefs.setBool(_keyIsLoggedIn, false);
   }
 

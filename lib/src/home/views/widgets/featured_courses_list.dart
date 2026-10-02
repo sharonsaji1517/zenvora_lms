@@ -6,12 +6,12 @@ import '../../view_models/home_view_model.dart';
 import '../../../courses/views/course_detail_screen.dart';
 
 class FeaturedCoursesList extends StatelessWidget {
-  final HomeViewModel viewModel;
+  final HomeViewModel? viewModel;
   final List<CourseModel> courses;
 
   const FeaturedCoursesList({
     super.key,
-    required this.viewModel,
+    this.viewModel,
     required this.courses,
   });
 
@@ -91,7 +91,7 @@ class FeaturedCoursesList extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Course image and favorite button overlay
+                // Course image
                 Expanded(
                   flex: 4,
                   child: Stack(
@@ -122,38 +122,6 @@ class FeaturedCoursesList extends StatelessWidget {
                               color: Colors.white,
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Favorite button
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: GestureDetector(
-                          onTap: () => viewModel.toggleFavorite(course.id),
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              course.isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: course.isFavorite
-                                  ? Colors.redAccent
-                                  : AppTheme.textLight,
-                              size: 18,
                             ),
                           ),
                         ),

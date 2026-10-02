@@ -11,7 +11,6 @@ class CourseModel {
   final String? longDescription;
   final String? aboutCourse;
   final String? image;
-  bool isFavorite;
   double progress;
   bool isEnrolled;
 
@@ -28,7 +27,6 @@ class CourseModel {
     this.longDescription,
     this.aboutCourse,
     this.image,
-    this.isFavorite = false,
     this.progress = 0.0,
     this.isEnrolled = false,
   });
@@ -60,8 +58,6 @@ class CourseModel {
   String get title => name;
   String get description => shortDescription;
   double get price => double.tryParse(fee) ?? 0.0;
-  double get rating => 4.8;
-  int get reviewCount => 120;
   String get imageUrl => image ?? '';
   bool get isRigAssociated => true;
   bool get isFeatured => true;

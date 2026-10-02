@@ -3,7 +3,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../models/course_model.dart';
 import '../../view_models/enrollment_modal_view_model.dart';
 
-Future<void> showCourseEnrollmentModal(
+Future<bool?> showCourseEnrollmentModal(
   BuildContext context,
   CourseModel course,
 ) {
@@ -385,38 +385,13 @@ class _CourseEnrollmentModalState extends State<CourseEnrollmentModal> {
         _buildOverviewSection(context),
         const SizedBox(height: 14),
         _buildPriceSection(context),
-        const SizedBox(height: 18),
-        const Text(
-          'Payment Options',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textDark,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _buildPaymentOptionCard(
-          context: context,
-          type: PaymentType.manual,
-          title: 'Manual Payment',
-          subtitle: 'Send a payment request to the admin',
-          icon: Icons.receipt_long_rounded,
-        ),
-        const SizedBox(height: 10),
-        _buildPaymentOptionCard(
-          context: context,
-          type: PaymentType.online,
-          title: 'Online Payment',
-          subtitle: 'Pay securely online',
-          icon: Icons.credit_card_rounded,
-        ),
         const SizedBox(height: 22),
         // Primary Action Button
         SizedBox(
           width: double.infinity,
           height: 48,
           child: ElevatedButton(
-            onPressed: _viewModel.proceedFromOptions,
+            onPressed: _viewModel.isEnrolling ? null : () => _viewModel.enrollCourse(context, widget.course),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               padding: EdgeInsets.zero,
@@ -427,21 +402,29 @@ class _CourseEnrollmentModalState extends State<CourseEnrollmentModal> {
             ),
             child: Ink(
               decoration: BoxDecoration(
-                gradient: AppTheme.brandBlueGreenGradientOf(context),
+                gradient: _viewModel.isEnrolling ? null : AppTheme.brandBlueGreenGradientOf(context),
+                color: _viewModel.isEnrolling ? AppTheme.textLight : null,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Container(
                 alignment: Alignment.center,
-                child: Text(
-                  _viewModel.selectedPaymentType == PaymentType.manual
-                      ? 'Proceed with Manual Request'
-                      : 'Choose Payment Method',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: _viewModel.isEnrolling
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Enroll Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -703,7 +686,7 @@ class _CourseEnrollmentModalState extends State<CourseEnrollmentModal> {
           width: double.infinity,
           height: 48,
           child: ElevatedButton(
-            onPressed: _viewModel.proceedToPayment,
+            onPressed: () => _viewModel.proceedToPayment(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               padding: EdgeInsets.zero,

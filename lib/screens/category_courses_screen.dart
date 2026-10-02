@@ -291,44 +291,15 @@ class _CategoryCoursesScreenState extends State<CategoryCoursesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Course Title & Rating Row
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            course.name,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.brandDeepBlue,
-                              height: 1.25,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppTheme.brandGoldenYellow.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.star_rounded, color: AppTheme.brandGoldenYellow, size: 14),
-                              const SizedBox(width: 2),
-                              Text(
-                                '${course.rating}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.textDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    // Course Title
+                    Text(
+                      course.name,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.brandDeepBlue,
+                        height: 1.25,
+                      ),
                     ),
                     const SizedBox(height: 8),
 

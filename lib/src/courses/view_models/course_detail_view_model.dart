@@ -66,13 +66,6 @@ class CourseDetailViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite() {
-    if (_course != null) {
-      _course!.isFavorite = !_course!.isFavorite;
-      notifyListeners();
-    }
-  }
-
   Future<void> enrollInCourse(BuildContext context) async {
     if (_course == null || _course!.isEnrolled) return;
 

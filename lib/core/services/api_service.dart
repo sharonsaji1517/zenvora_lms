@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/course_model.dart';
+import '../../models/instructor_model.dart';
 import '../../src/profile/models/student_profile_model.dart';
 import '../../src/classroom/models/classroom_model.dart';
 import 'user_preferences_service.dart';
 
 class ApiService {
-  static const String baseUrl = "https://zen.trynet.work/api";
+  static const String baseUrl = "https://eduzenvora.com/api";
 
   Future<http.Response> login(String email, String password) async {
     return await http.post(
@@ -16,6 +17,17 @@ class ApiService {
         'Accept': 'application/json',
       },
       body: jsonEncode({'email': email, 'password': password}),
+    );
+  }
+
+  Future<http.Response> forgotPassword(String email) async {
+    return await http.post(
+      Uri.parse('$baseUrl/forgot-password'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({'email': email}),
     );
   }
 
@@ -229,6 +241,61 @@ class ApiService {
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<http.Response> enrollCourse(int courseId) async {
+    final token = await UserPreferencesService().getToken();
+    return await http.post(
+      Uri.parse('$baseUrl/student/enroll/$courseId'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+  }
+
+  Future<http.Response> verifyRazorpayPayment({
+    required int paymentId,
+    required String razorpayPaymentId,
+    required String razorpayOrderId,
+    required String razorpaySignature,
+  }) async {
+    final token = await UserPreferencesService().getToken();
+    return await http.post(
+      Uri.parse('$baseUrl/payment/razorpay/verify'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'payment_id': paymentId,
+        'razorpay_payment_id': razorpayPaymentId,
+        'razorpay_order_id': razorpayOrderId,
+        'razorpay_signature': razorpaySignature,
+      }),
+    );
+  }
+
+  Future<List<InstructorModel>> getTeam() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/team'),
+        headers: {'Accept': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if ((data['success'] == true || data['status'] == true) &&
+            data['team'] != null &&
+            data['team'] is List) {
+          final List list = data['team'];
+          return list.map((json) => InstructorModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      return [];
     }
   }
 }

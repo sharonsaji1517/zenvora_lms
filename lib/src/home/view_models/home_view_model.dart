@@ -107,15 +107,9 @@ class HomeViewModel extends ChangeNotifier {
     try {
       final prefsService = UserPreferencesService();
       _fullName = await prefsService.getFullName();
-      final wishlist = await prefsService.getWishlist();
 
       await loadTopCategories();
       await loadCourses();
-
-      // Update favorite status from wishlist
-      for (var course in _courses) {
-        course.isFavorite = wishlist.contains(course.id.toString());
-      }
     } catch (e) {
       _errorMessage = 'Failed to load dashboard data. Please try again.';
     } finally {
@@ -136,18 +130,6 @@ class HomeViewModel extends ChangeNotifier {
       _selectedCategoryId = categoryId;
     }
     notifyListeners();
-  }
-
-  Future<void> toggleFavorite(dynamic courseId) async {
-    final String idStr = courseId.toString();
-    final index = _courses.indexWhere((c) => c.id.toString() == idStr);
-    if (index != -1) {
-      _courses[index].isFavorite = !_courses[index].isFavorite;
-      notifyListeners();
-
-      final prefsService = UserPreferencesService();
-      await prefsService.toggleWishlist(idStr);
-    }
   }
 
   List<CourseModel> getFilteredCourses() {

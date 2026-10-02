@@ -4,6 +4,10 @@ import '../../../core/services/api_service.dart';
 import '../../../../models/course_model.dart';
 import '../models/classroom_model.dart';
 import '../view_models/classroom_view_model.dart';
+import 'pdf_viewer_screen.dart';
+import 'ppt_viewer_screen.dart';
+import 'youtube_player_screen.dart';
+import 'video_player_screen.dart';
 
 class ClassroomScreen extends StatefulWidget {
   const ClassroomScreen({super.key});
@@ -323,12 +327,64 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     );
   }
 
+  void _openPdf(ClassroomPdfModel pdf) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PdfViewerScreen(
+          title: pdf.title,
+          url: pdf.url,
+        ),
+      ),
+    );
+  }
+
+  void _openPpt(ClassroomPptModel ppt) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PptViewerScreen(
+          title: ppt.title,
+          url: ppt.url,
+        ),
+      ),
+    );
+  }
+
+  void _openYoutubeLink(ClassroomYoutubeLinkModel yt) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YoutubePlayerScreen(
+          title: yt.title,
+          url: yt.url,
+        ),
+      ),
+    );
+  }
+
+  void _openPrivateVideo(ClassroomPrivateVideoModel pv) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerScreen(
+          title: pv.title,
+          url: pv.url,
+        ),
+      ),
+    );
+  }
+
   Widget _buildContentTabs(ClassroomModel? classroom) {
+    final privateCount = (classroom?.privateVideos.length ?? 0) > 0
+        ? classroom!.privateVideos.length
+        : (classroom?.videos.length ?? 0);
+
     final tabs = [
       {'label': 'PDF', 'icon': Icons.picture_as_pdf_rounded, 'count': classroom?.pdfs.length ?? 0},
       {'label': 'PPT', 'icon': Icons.slideshow_rounded, 'count': classroom?.ppts.length ?? 0},
       {'label': 'YouTube Links', 'icon': Icons.play_circle_fill_rounded, 'count': classroom?.youtubeLinks.length ?? 0},
-      {'label': 'Private Videos', 'icon': Icons.lock_rounded, 'count': classroom?.privateVideos.length ?? 0},
+      {'label': 'Private Videos', 'icon': Icons.lock_rounded, 'count': privateCount},
     ];
 
     return SingleChildScrollView(
@@ -466,6 +522,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     icon: Icons.picture_as_pdf_rounded,
                     iconColor: Colors.deepOrangeAccent,
                     subtitle: 'PDF Document',
+                    onTap: () => _openPdf(pdf),
                   ))
               .toList(),
         );
@@ -482,6 +539,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     icon: Icons.slideshow_rounded,
                     iconColor: Colors.amber.shade800,
                     subtitle: 'PPT Presentation',
+                    onTap: () => _openPpt(ppt),
                   ))
               .toList(),
         );
@@ -498,12 +556,22 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     icon: Icons.play_circle_outline_rounded,
                     iconColor: Colors.redAccent,
                     subtitle: 'YouTube Reference',
+                    onTap: () => _openYoutubeLink(yt),
                   ))
               .toList(),
         );
 
       case 3: // Private Videos
-        final privateVideos = classroom.privateVideos;
+        final privateVideos = classroom.privateVideos.isNotEmpty
+            ? classroom.privateVideos
+            : classroom.videos
+                .map((v) => ClassroomPrivateVideoModel(
+                      id: v.id,
+                      title: v.title,
+                      url: v.url,
+                    ))
+                .toList();
+
         if (privateVideos.isEmpty) {
           return _buildEmptyResourceCard('No private videos available', Icons.lock_outline_rounded);
         }
@@ -514,6 +582,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     icon: Icons.lock_clock_rounded,
                     iconColor: Theme.of(context).colorScheme.secondary,
                     subtitle: 'Private Video',
+                    onTap: () => _openPrivateVideo(pv),
                   ))
               .toList(),
         );
@@ -528,6 +597,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     required IconData icon,
     required Color iconColor,
     required String subtitle,
+    VoidCallback? onTap,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -544,6 +614,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         border: Border.all(color: AppTheme.borderLight.withValues(alpha: 0.8)),
       ),
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         leading: Container(
           padding: const EdgeInsets.all(10),

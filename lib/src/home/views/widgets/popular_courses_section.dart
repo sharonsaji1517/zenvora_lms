@@ -203,39 +203,6 @@ class PopularCoursesSection extends StatelessWidget {
                                   ),
                                 ),
                               ),
-
-                              // Wishlist Heart Icon Button at Top-Right
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      viewModel.toggleFavorite(course.id),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.15),
-                                          blurRadius: 6,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Icon(
-                                      course.isFavorite
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: course.isFavorite
-                                          ? Colors.redAccent
-                                          : AppTheme.textLight,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
 
@@ -261,36 +228,9 @@ class PopularCoursesSection extends StatelessWidget {
                                     ),
                                   ),
 
-                                  // Rating & Lesson Count Row
+                                  // Lesson Count / Duration Row
                                   Row(
                                     children: [
-                                      // Rating
-                                      const Icon(
-                                        Icons.star_rounded,
-                                        color: AppTheme.brandGoldenYellow,
-                                        size: 15,
-                                      ),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        course.rating.toStringAsFixed(1),
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppTheme.textDark,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // Divider dot
-                                      Container(
-                                        width: 3,
-                                        height: 3,
-                                        decoration: const BoxDecoration(
-                                          color: AppTheme.textLight,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // Lesson Count / Duration
                                       const Icon(
                                         Icons.menu_book_outlined,
                                         color: AppTheme.textLight,

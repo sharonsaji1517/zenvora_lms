@@ -200,26 +200,8 @@ class OnboardingPageTwo extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Row(
-                                      children: const [
-                                        Icon(
-                                          Icons.star_rounded,
-                                          color: AppTheme.goldenAccent,
-                                          size: 16,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          '4.9 (1.2k Ratings)',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppTheme.textDark,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 8,

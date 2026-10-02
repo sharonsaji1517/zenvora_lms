@@ -192,15 +192,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(
-                        course.isFavorite ? Icons.star : Icons.star_border,
-                        color: course.isFavorite ? Colors.amber : Colors.white,
-                      ),
-                      onPressed: _viewModel!.toggleFavorite,
-                    ),
-                  ],
                   flexibleSpace: FlexibleSpaceBar(
                     background: _buildFlexibleHeaderImage(course.image),
                   ),
@@ -331,11 +322,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               child: ElevatedButton(
                                 onPressed: course.isEnrolled
                                     ? null
-                                    : () {
-                                        showCourseEnrollmentModal(
+                                    : () async {
+                                        final result = await showCourseEnrollmentModal(
                                           context,
                                           course,
                                         );
+                                        if (result == true) {
+                                          _viewModel?.fetchCourseDetail();
+                                        }
                                       },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppTheme.accentGreen,

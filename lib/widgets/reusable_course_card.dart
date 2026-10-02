@@ -6,9 +6,7 @@ class ReusableCourseCard extends StatelessWidget {
   final String imageUrl;
   final double? progress;
   final String? price;
-  final bool isFavorite;
   final VoidCallback onTap;
-  final VoidCallback? onFavoriteTap;
 
   const ReusableCourseCard({
     super.key,
@@ -17,8 +15,6 @@ class ReusableCourseCard extends StatelessWidget {
     required this.onTap,
     this.progress,
     this.price,
-    this.isFavorite = false,
-    this.onFavoriteTap,
   });
 
   @override
@@ -46,41 +42,17 @@ class ReusableCourseCard extends StatelessWidget {
             // Course Image
             Expanded(
               flex: 5,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-                    child: Image.asset(
-                      imageUrl,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image, color: Colors.grey),
-                      ),
-                    ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                child: Image.asset(
+                  imageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.image, color: Colors.grey),
                   ),
-                  if (price != null)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: onFavoriteTap,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.redAccent : Colors.grey[600],
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+                ),
               ),
             ),
             // Course Details

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/routes/app_routes.dart';
 import '../core/services/api_service.dart';
-import '../core/services/user_preferences_service.dart';
 import '../core/theme/app_theme.dart';
 import '../models/course_model.dart';
 import '../src/courses/views/course_detail_screen.dart';
@@ -16,7 +15,6 @@ class CoursesScreen extends StatefulWidget {
 
 class _CoursesScreenState extends State<CoursesScreen> {
   final ApiService _apiService = ApiService();
-  final UserPreferencesService _prefsService = UserPreferencesService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<CourseModel> _courses = [];
@@ -37,10 +35,6 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
     try {
       final courses = await _apiService.getCourses();
-      final wishlist = await _prefsService.getWishlist();
-      for (var c in courses) {
-        c.isFavorite = wishlist.contains(c.id.toString());
-      }
       if (mounted) {
         setState(() {
           _courses = courses;
@@ -54,17 +48,6 @@ class _CoursesScreenState extends State<CoursesScreen> {
           _isLoading = false;
         });
       }
-    }
-  }
-
-  Future<void> _toggleFavorite(int courseId) async {
-    final idStr = courseId.toString();
-    final index = _courses.indexWhere((c) => c.id == courseId);
-    if (index != -1) {
-      setState(() {
-        _courses[index].isFavorite = !_courses[index].isFavorite;
-      });
-      await _prefsService.toggleWishlist(idStr);
     }
   }
 
@@ -230,39 +213,6 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         ),
                       ),
                     ),
-
-                  // Wishlist Heart Icon Button at Top-Right
-                  Positioned(
-                    top: 7,
-                    right: 7,
-                    child: GestureDetector(
-                      onTap: () => _toggleFavorite(course.id),
-                      behavior: HitTestBehavior.opaque,
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.92),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          course.isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: course.isFavorite
-                              ? Colors.redAccent
-                              : AppTheme.textLight,
-                          size: 15,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
 
@@ -287,39 +237,15 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         ),
                       ),
 
-                      // Rating & Duration
+                      // Duration
                       Row(
                         children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: AppTheme.brandGoldenYellow,
-                            size: 14,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            course.rating.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textDark,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Container(
-                            width: 3,
-                            height: 3,
-                            decoration: const BoxDecoration(
-                              color: AppTheme.textLight,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
                           const Icon(
                             Icons.access_time_rounded,
                             color: AppTheme.textLight,
                             size: 11,
                           ),
-                          const SizedBox(width: 2),
+                          const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               '${course.durationDays}d',

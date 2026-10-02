@@ -65,40 +65,21 @@ class CourseDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Categories and Rating
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF163A5F).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          'English',
-                          style: TextStyle(
-                            color: Color(0xFF163A5F),
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                  // Category
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF163A5F).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      'English',
+                      style: TextStyle(
+                        color: Color(0xFF163A5F),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.orange, size: 18),
-                          SizedBox(width: 4),
-                          Text(
-                            '4.8 (1.2k reviews)',
-                            style: TextStyle(
-                              color: Color(0xFF64748B),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   

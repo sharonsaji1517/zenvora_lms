@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/routes/app_routes.dart';
 
 class ForgotPasswordViewModel extends ChangeNotifier {
+  final ApiService _apiService = ApiService();
   String _email = '';
   bool _isLoading = false;
   String? _errorMessage;
@@ -37,22 +41,41 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     _successMessage = null;
     notifyListeners();
 
-    // Simulate API delay
-    await Future.delayed(const Duration(milliseconds: 1200));
+    try {
+      final response = await _apiService.forgotPassword(_email);
+      final data = jsonDecode(response.body);
 
-    _isLoading = false;
-    _successMessage = 'Password reset link sent successfully.';
-    notifyListeners();
+      _isLoading = false;
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_successMessage!),
-          backgroundColor: const Color(0xFF163A5F),
-          duration: const Duration(seconds: 4),
-        ),
-      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _successMessage = data['message'] ?? 'Password reset link has been sent to your email.';
+        notifyListeners();
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(_successMessage!),
+              backgroundColor: const Color(0xFF163A5F),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          
+          await Future.delayed(const Duration(seconds: 2));
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, AppRoutes.login);
+          }
+        }
+        return true;
+      } else {
+        _errorMessage = data['message'] ?? 'Something went wrong. Please try again.';
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = 'Network error occurred. Please try again.';
+      notifyListeners();
+      return false;
     }
-    return true;
   }
 }

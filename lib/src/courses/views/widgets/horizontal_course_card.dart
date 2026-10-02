@@ -5,14 +5,12 @@ import '../../../../models/course_model.dart';
 
 class HorizontalCourseCard extends StatelessWidget {
   final CourseModel course;
-  final VoidCallback onFavoriteTap;
   final VoidCallback? onTap;
   final String? actionButtonText;
 
   const HorizontalCourseCard({
     super.key,
     required this.course,
-    required this.onFavoriteTap,
     this.onTap,
     this.actionButtonText = 'Go to Classroom',
   });
@@ -95,7 +93,7 @@ class HorizontalCourseCard extends StatelessWidget {
                     fit: StackFit.expand,
                     children: [
                       _buildCourseImage(course.image),
-                      // Top gradient for badge / heart readability
+                      // Top gradient for badge readability
                       Positioned.fill(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
@@ -147,38 +145,6 @@ class HorizontalCourseCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      // Wishlist / Favorite Button on Top-Right
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: GestureDetector(
-                          onTap: onFavoriteTap,
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.92),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              course.isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: course.isFavorite
-                                  ? Colors.redAccent
-                                  : AppTheme.textDark,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

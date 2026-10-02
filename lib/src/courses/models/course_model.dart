@@ -39,8 +39,6 @@ class SyllabusModule {
 class Course {
   final String id;
   final String title;
-  final double rating;
-  final int reviewCount;
   final double price;
   final String imageUrl;
   final bool isRigAssociated;
@@ -52,13 +50,10 @@ class Course {
   final List<String> resources;
   bool isEnrolled;
   double progress; // 0.0 to 1.0
-  bool isFavorite;
 
   Course({
     required this.id,
     required this.title,
-    required this.rating,
-    required this.reviewCount,
     required this.price,
     required this.imageUrl,
     required this.isRigAssociated,
@@ -70,7 +65,6 @@ class Course {
     required this.resources,
     this.isEnrolled = false,
     this.progress = 0.0,
-    this.isFavorite = false,
   });
 }
 
@@ -187,8 +181,6 @@ List<Course> getMockCourses() {
     Course(
       id: 'c1',
       title: ' Safety Fundamentals',
-      rating: 4.8,
-      reviewCount: 156,
       price: 89.99,
       imageUrl: 'assets/images/carousel/logistics1.jpg',
       isRigAssociated: true,
@@ -208,14 +200,11 @@ List<Course> getMockCourses() {
         'Offshore Safety Cheat Sheet.pdf',
         'API RP 75 Recommended Practice.pdf',
       ],
-      isFavorite: true,
       progress: 0.35,
     ),
     Course(
       id: 'c2',
       title: 'Drilling Operations 101',
-      rating: 4.7,
-      reviewCount: 92,
       price: 129.99,
       imageUrl: 'assets/images/carousel/logistics2.jpg',
       isRigAssociated: true,
@@ -239,8 +228,6 @@ List<Course> getMockCourses() {
     Course(
       id: 'c3',
       title: 'Offshore Platform Safety',
-      rating: 4.9,
-      reviewCount: 210,
       price: 149.99,
       imageUrl: 'assets/images/carousel/logistics3.jpg',
       isRigAssociated: true,
@@ -259,14 +246,11 @@ List<Course> getMockCourses() {
         'HUET Training Checklist.pdf',
         'Platform Layout & Fire Plan.pdf',
       ],
-      isFavorite: false,
       progress: 0.12,
     ),
     Course(
       id: 'c4',
       title: 'HSE Standards & Compliance',
-      rating: 4.6,
-      reviewCount: 78,
       price: 79.99,
       imageUrl: 'assets/images/carousel/FlvdF.jpg',
       isRigAssociated: false,
@@ -285,7 +269,6 @@ List<Course> getMockCourses() {
         'ISO 45001 Compliance Template.xlsx',
         'Auditing Checklist PDF.pdf',
       ],
-      isFavorite: false,
       progress: 0.0,
     ),
   ];

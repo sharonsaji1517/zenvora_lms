@@ -191,7 +191,6 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                   return HorizontalCourseCard(
                     course: course,
                     actionButtonText: 'Go to Classroom',
-                    onFavoriteTap: () => _viewModel.toggleFavorite(course.id),
                     onTap: () {
                       Navigator.pushNamed(
                         context,
