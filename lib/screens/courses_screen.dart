@@ -70,8 +70,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
       final fullUrl = (trimmed.startsWith('http://') || trimmed.startsWith('https://'))
           ? trimmed
           : (trimmed.startsWith('/')
-              ? 'https://zen.trynet.work$trimmed'
-              : 'https://zen.trynet.work/$trimmed');
+              ? 'https://eduzenvora.com$trimmed'
+              : 'https://eduzenvora.com/$trimmed');
       return Image.network(
         fullUrl,
         fit: BoxFit.cover,

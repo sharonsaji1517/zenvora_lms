@@ -5,6 +5,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../core/services/user_preferences_service.dart';
 import '../../../../models/course_model.dart';
+import '../../../../models/payment_status_model.dart';
 
 enum EnrollmentStep {
   options,
@@ -35,6 +36,8 @@ class EnrollmentModalViewModel extends ChangeNotifier {
   bool _isEnrolling = false;
 
   Map<String, dynamic>? _paymentDetails;
+  int? _paymentId;
+  PaymentStatusModel? _paymentStatus;
   String? _gateway;
   String? _paymentErrorMessage;
   CourseModel? _course;
@@ -63,8 +66,18 @@ class EnrollmentModalViewModel extends ChangeNotifier {
   bool get isDescriptionExpanded => _isDescriptionExpanded;
   bool get isEnrolling => _isEnrolling;
   Map<String, dynamic>? get paymentDetails => _paymentDetails;
+  int? get paymentId => _paymentId ?? dynamicPaymentId;
+  PaymentStatusModel? get paymentStatus => _paymentStatus;
   String? get gateway => _gateway;
   String? get paymentErrorMessage => _paymentErrorMessage;
+
+  int? get dynamicPaymentId {
+    if (_paymentId != null) return _paymentId;
+    final rawId = _paymentDetails?['payment_id'] ?? _paymentDetails?['id'];
+    if (rawId is int) return rawId;
+    if (rawId != null) return int.tryParse(rawId.toString());
+    return null;
+  }
 
   void setPaymentType(PaymentType type) {
     _selectedPaymentType = type;
@@ -104,7 +117,18 @@ class EnrollmentModalViewModel extends ChangeNotifier {
           }
         } else {
           _gateway = data['gateway'];
-          _paymentDetails = data['payment'];
+          _paymentDetails = data['payment'] is Map<String, dynamic>
+              ? Map<String, dynamic>.from(data['payment'])
+              : null;
+          final rawId = _paymentDetails?['payment_id'] ?? _paymentDetails?['id'];
+          if (rawId is int) {
+            _paymentId = rawId;
+          } else if (rawId != null) {
+            _paymentId = int.tryParse(rawId.toString());
+          }
+          if (kDebugMode) {
+            debugPrint('Enrollment initiated: payment_id = $_paymentId, gateway = $_gateway');
+          }
           // Keep response available, navigate to onlineMethods for next step
           _currentStep = EnrollmentStep.onlineMethods;
         }
@@ -175,7 +199,7 @@ class EnrollmentModalViewModel extends ChangeNotifier {
 
       if (kDebugMode) {
         debugPrint('--- RAZORPAY SUCCESS CALLBACK ---');
-        debugPrint('Zenvora payment_id: ${_paymentDetails!['payment_id']}');
+        debugPrint('Zenvora payment_id: ${dynamicPaymentId ?? _paymentDetails!['payment_id']}');
         debugPrint('razorpay_payment_id: ${response.paymentId}');
         debugPrint('razorpay_order_id: ${response.orderId}');
         debugPrint('razorpay_signature: ${response.signature}');
@@ -187,31 +211,35 @@ class EnrollmentModalViewModel extends ChangeNotifier {
   }
 
   Future<void> _verifyPayment() async {
+    final pId = dynamicPaymentId;
+    if (pId == null) {
+      _paymentErrorMessage = 'Payment ID is missing.';
+      if (_context != null && _context!.mounted) {
+        ScaffoldMessenger.of(_context!).showSnackBar(
+          SnackBar(content: Text(_paymentErrorMessage!)),
+        );
+      }
+      return;
+    }
+
     _isEnrolling = true;
+    _paymentErrorMessage = null;
     notifyListeners();
 
     try {
       final response = await _apiService.verifyRazorpayPayment(
-        paymentId: _paymentDetails!['payment_id'],
+        paymentId: pId,
         razorpayPaymentId: _paymentDetails!['razorpay_payment_id'],
         razorpayOrderId: _paymentDetails!['razorpay_order_id'],
         razorpaySignature: _paymentDetails!['razorpay_signature'],
       );
-      
+
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (data['success'] == true) {
-          if (_course != null) {
-            _course!.isEnrolled = true;
-            _course!.progress = 0.0;
-          }
-          if (_context != null && _context!.mounted) {
-            ScaffoldMessenger.of(_context!).showSnackBar(
-              SnackBar(content: Text(data['message'] ?? 'Payment verified and course enrolled successfully.')),
-            );
-            Navigator.pop(_context!, true);
-          }
+          // Backend verification source of truth: Call Payment Status API
+          await _checkPaymentStatusAndFinalize(pId, fallbackSuccessMessage: data['message']);
         } else {
           _paymentErrorMessage = data['message'] ?? 'Payment verification failed.';
           if (_context != null && _context!.mounted) {
@@ -229,6 +257,9 @@ class EnrollmentModalViewModel extends ChangeNotifier {
         }
       }
     } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error during payment verification: $e');
+      }
       _paymentErrorMessage = 'Network error during verification.';
       if (_context != null && _context!.mounted) {
         ScaffoldMessenger.of(_context!).showSnackBar(
@@ -239,6 +270,129 @@ class EnrollmentModalViewModel extends ChangeNotifier {
       _isEnrolling = false;
       notifyListeners();
     }
+  }
+
+  Future<void> _checkPaymentStatusAndFinalize(
+    int paymentId, {
+    String? fallbackSuccessMessage,
+  }) async {
+    try {
+      if (kDebugMode) {
+        debugPrint('Calling Payment Status API for paymentId: $paymentId');
+      }
+
+      final statusResponse = await _apiService.getPaymentStatus(paymentId);
+
+      if (kDebugMode) {
+        debugPrint('--- PAYMENT STATUS API RESPONSE ---');
+        debugPrint('Status Code: ${statusResponse.statusCode}');
+        debugPrint('Body: ${statusResponse.body}');
+        debugPrint('-----------------------------------');
+      }
+
+      if (statusResponse.statusCode == 200) {
+        final statusJson = jsonDecode(statusResponse.body);
+        if (statusJson is Map<String, dynamic>) {
+          _paymentStatus = PaymentStatusModel.fromJson(statusJson);
+
+          if (_paymentStatus!.courseAccess == true) {
+            if (_course != null) {
+              _course!.isEnrolled = true;
+              _course!.progress = 0.0;
+            }
+            if (_context != null && _context!.mounted) {
+              ScaffoldMessenger.of(_context!).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    _paymentStatus!.payment?.message ??
+                        fallbackSuccessMessage ??
+                        'Payment verified and course enrolled successfully.',
+                  ),
+                ),
+              );
+              Navigator.pop(_context!, true);
+            }
+          } else {
+            // course_access == false
+            final statusStr = _paymentStatus!.payment?.status;
+            final msg = _paymentStatus!.payment?.message;
+            _paymentErrorMessage = (statusStr != null && statusStr != 'completed')
+                ? 'Payment status: $statusStr. Course access not granted yet.'
+                : (msg ?? 'Course access has not been granted yet.');
+
+            if (_context != null && _context!.mounted) {
+              ScaffoldMessenger.of(_context!).showSnackBar(
+                SnackBar(content: Text(_paymentErrorMessage!)),
+              );
+            }
+          }
+        } else {
+          _paymentErrorMessage = 'Unexpected response format from payment status API.';
+          if (_context != null && _context!.mounted) {
+            ScaffoldMessenger.of(_context!).showSnackBar(
+              SnackBar(content: Text(_paymentErrorMessage!)),
+            );
+          }
+        }
+      } else if (statusResponse.statusCode == 401) {
+        _paymentErrorMessage = 'Session expired or unauthorized. Please log in again.';
+        if (_context != null && _context!.mounted) {
+          ScaffoldMessenger.of(_context!).showSnackBar(
+            SnackBar(content: Text(_paymentErrorMessage!)),
+          );
+        }
+      } else if (statusResponse.statusCode == 404) {
+        _paymentErrorMessage = 'Payment record not found on server.';
+        if (_context != null && _context!.mounted) {
+          ScaffoldMessenger.of(_context!).showSnackBar(
+            SnackBar(content: Text(_paymentErrorMessage!)),
+          );
+        }
+      } else {
+        String msg = 'Failed to verify payment status (Code: ${statusResponse.statusCode}).';
+        try {
+          final errJson = jsonDecode(statusResponse.body);
+          if (errJson is Map<String, dynamic> && errJson['message'] != null) {
+            msg = errJson['message'].toString();
+          }
+        } catch (_) {}
+        _paymentErrorMessage = msg;
+        if (_context != null && _context!.mounted) {
+          ScaffoldMessenger.of(_context!).showSnackBar(
+            SnackBar(content: Text(_paymentErrorMessage!)),
+          );
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Exception in Payment Status API check: $e');
+      }
+      _paymentErrorMessage = 'Network error while checking payment status.';
+      if (_context != null && _context!.mounted) {
+        ScaffoldMessenger.of(_context!).showSnackBar(
+          SnackBar(content: Text(_paymentErrorMessage!)),
+        );
+      }
+    }
+  }
+
+  Future<PaymentStatusModel?> checkPaymentStatus(int paymentId) async {
+    try {
+      final response = await _apiService.getPaymentStatus(paymentId);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is Map<String, dynamic>) {
+          _paymentStatus = PaymentStatusModel.fromJson(data);
+          notifyListeners();
+          return _paymentStatus;
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error in checkPaymentStatus: $e');
+      }
+    }
+    return null;
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {

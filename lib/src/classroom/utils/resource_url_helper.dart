@@ -1,5 +1,5 @@
 class ResourceUrlHelper {
-  static const String serverHost = 'https://zen.trynet.work';
+  static const String serverHost = 'https://eduzenvora.com';
 
   /// Resolves any resource URL (relative or absolute) to a full, valid URL.
   static String resolveUrl(String? url) {

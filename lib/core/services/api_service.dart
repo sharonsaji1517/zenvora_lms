@@ -278,6 +278,17 @@ class ApiService {
     );
   }
 
+  Future<http.Response> getPaymentStatus(int paymentId) async {
+    final token = await UserPreferencesService().getToken();
+    return await http.get(
+      Uri.parse('$baseUrl/payment/$paymentId/status'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${token ?? ''}',
+      },
+    );
+  }
+
   Future<List<InstructorModel>> getTeam() async {
     try {
       final response = await http.get(

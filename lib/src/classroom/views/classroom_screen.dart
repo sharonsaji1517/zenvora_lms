@@ -225,7 +225,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('/'));
     final fullUrl = hasValidUrl
         ? (imagePath.startsWith('/')
-            ? 'https://zen.trynet.work$imagePath'
+            ? 'https://eduzenvora.com$imagePath'
             : imagePath)
         : null;
 
