@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../src/home/views/widgets/left_navigation_drawer.dart';
 import '../core/services/user_preferences_service.dart';
 import '../core/services/api_service.dart';
@@ -126,21 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/images/profile.jpg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey.shade200,
-                            child: Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.grey.shade400,
-                            ),
-                          );
-                        },
-                      ),
+                    child: const Center(
+                      child: Icon(Icons.person, size: 56, color: Colors.white),
                     ),
                   ),
                 ),
@@ -190,7 +178,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
 
   Widget _buildPersonalInfoCard() {
     return Container(
@@ -339,6 +326,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'Logout',
             isDestructive: true,
             onTap: () => _showLogoutDialog(context),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: GestureDetector(
+            onTap: () async {
+              final uri = Uri.parse('https://trynetworld.com/');
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
+            child: Text(
+              'Developed by Trynet World',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: const Color.fromARGB(
+                  31,
+                  29,
+                  29,
+                  29,
+                ).withValues(alpha: 0.7),
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+              ),
+            ),
           ),
         ),
       ],

@@ -69,46 +69,23 @@ class _LeftNavigationDrawerState extends State<LeftNavigationDrawer> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            'assets/images/profile.jpg',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey.shade200,
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.person,
-                                  size: 28,
-                                  color: Colors.grey.shade600,
-                                ),
-                              );
-                            },
+                        child: const Center(
+                          child: Icon(
+                            Icons.person,
+                            size: 32,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _fullName,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            const Text(
-                              'Rig Operator Trainee',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          _fullName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],

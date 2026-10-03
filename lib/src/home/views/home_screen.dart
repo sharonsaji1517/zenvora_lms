@@ -109,33 +109,33 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          actions: [
-            IconButton(
-              icon: const Badge(
-                backgroundColor: AppTheme.brandGoldenYellow,
-                label: Text(
-                  '3',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: Icon(
-                  Icons.notifications_none_rounded,
-                  color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Notifications center coming soon'),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(width: 8),
-          ],
+          // actions: [
+          //   IconButton(
+          //     icon: const Badge(
+          //       backgroundColor: AppTheme.brandGoldenYellow,
+          //       label: Text(
+          //         '3',
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 10,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //       child: Icon(
+          //         Icons.notifications_none_rounded,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //     onPressed: () {
+          //       ScaffoldMessenger.of(context).showSnackBar(
+          //         const SnackBar(
+          //           content: Text('Notifications center coming soon'),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          //   const SizedBox(width: 8),
+          // ],
         ),
 
         // Main Scrollable Body using View Model state
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Good Morning, ${_viewModel.firstName} 👋',
+                          'Hay, ${_viewModel.firstName} 👋',
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppTheme.textLight,
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildNavItem(
                 context,
                 icon: Icons.groups_outlined,
-                label: 'Instructors',
+                label: 'Team',
                 isSelected: false,
               ),
 
@@ -313,7 +313,9 @@ class _HomeScreenState extends State<HomeScreen> {
     required String label,
     required bool isSelected,
   }) {
-    final inactiveColor = Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6);
+    final inactiveColor = Theme.of(
+      context,
+    ).colorScheme.secondary.withValues(alpha: 0.6);
 
     Widget content = Column(
       mainAxisSize: MainAxisSize.min,
@@ -343,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             MaterialPageRoute(builder: (context) => const ProfileScreen()),
           );
-        } else if (label == 'Instructors') {
+        } else if (label == 'Team') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const InstructorsScreen()),
@@ -363,7 +365,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

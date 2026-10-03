@@ -27,7 +27,10 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
     super.dispose();
   }
 
-  void _openInstructorDetails(BuildContext context, InstructorModel instructor) {
+  void _openInstructorDetails(
+    BuildContext context,
+    InstructorModel instructor,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -43,7 +46,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundLight,
       appBar: AppBar(
-        title: const Text('Instructors'),
+        title: const Text('Team'),
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -53,9 +56,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
         builder: (context, _) {
           if (_viewModel.isLoading && _viewModel.instructors.isEmpty) {
             return Center(
-              child: CircularProgressIndicator(
-                color: primaryColor,
-              ),
+              child: CircularProgressIndicator(color: primaryColor),
             );
           }
 
@@ -73,7 +74,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      _viewModel.errorMessage ?? 'Failed to load instructors.',
+                      _viewModel.errorMessage ?? 'Failed to load Team.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppTheme.textDark,
@@ -116,13 +117,16 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
             onRefresh: () => _viewModel.fetchInstructors(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section Heading
                   const Text(
-                    'Our Instructors',
+                    'Our Team',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -146,15 +150,20 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _viewModel.instructors.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 14,
-                      mainAxisSpacing: 14,
-                      childAspectRatio: 0.78,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 14,
+                          mainAxisSpacing: 14,
+                          childAspectRatio: 0.78,
+                        ),
                     itemBuilder: (context, index) {
                       final instructor = _viewModel.instructors[index];
-                      return _buildInstructorCard(context, instructor, primaryColor);
+                      return _buildInstructorCard(
+                        context,
+                        instructor,
+                        primaryColor,
+                      );
                     },
                   ),
                 ],
@@ -179,15 +188,11 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
                 color: primaryColor.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.groups_outlined,
-                size: 48,
-                color: primaryColor,
-              ),
+              child: Icon(Icons.groups_outlined, size: 48, color: primaryColor),
             ),
             const SizedBox(height: 18),
             const Text(
-              'No Instructors Available',
+              'No Team Available',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -196,7 +201,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Instructor details will appear here once available.',
+              'Team details will appear here once available.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -219,10 +224,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppTheme.borderLight,
-          width: 0.9,
-        ),
+        border: Border.all(color: AppTheme.borderLight, width: 0.9),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -238,7 +240,10 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: () => _openInstructorDetails(context, instructor),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 16.0,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -329,11 +334,7 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
     return Container(
       color: primaryColor.withValues(alpha: 0.1),
       alignment: Alignment.center,
-      child: Icon(
-        Icons.person_outline_rounded,
-        size: 38,
-        color: primaryColor,
-      ),
+      child: Icon(Icons.person_outline_rounded, size: 38, color: primaryColor),
     );
   }
 }
